@@ -7,277 +7,450 @@
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0f1117;--card:#1a1d27;--border:#2a2d3a;--blue:#4C8BF5;--green:#34D399;--orange:#F59E0B;--red:#EF4444;--text:#E5E7EB;--muted:#9CA3AF;--radius:12px}
+:root{--blue:#2563EB;--blue-dark:#1E40AF;--blue-light:#EFF6FF;--blue-50:#DBEAFE;--green:#059669;--green-light:#ECFDF5;--orange:#D97706;--orange-light:#FFFBEB;--red:#DC2626;--red-light:#FEF2F2;--text:#1F2937;--muted:#6B7280;--border:#E5E7EB;--bg:#F8FAFC;--card:#FFFFFF;--radius:14px;--shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04)}
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}
 
-/* LAYOUT */
-.layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
-.sidebar{background:var(--card);border-left:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;gap:8px}
-.sidebar-logo{font-size:1.4rem;font-weight:900;padding:8px 12px;margin-bottom:16px;color:#fff}
-.sidebar-logo span{color:var(--orange)}
-.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:var(--muted);font-weight:500;text-decoration:none;transition:.2s}
-.sidebar a:hover,.sidebar a.active{background:rgba(76,139,245,.15);color:var(--blue)}
-.main{padding:32px;overflow-y:auto}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
 
-/* TOP BAR */
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
-.topbar h1{font-size:1.6rem;font-weight:700}
-.topbar-actions{display:flex;gap:12px}
-.btn{padding:10px 20px;border-radius:8px;border:none;font-family:inherit;font-weight:700;cursor:pointer;font-size:.9rem;transition:.2s}
-.btn:hover{transform:translateY(-1px)}
+/* SIDEBAR */
+.sidebar{background:var(--card);border-left:1px solid var(--border);padding:20px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+.sidebar-logo{font-size:1.3rem;font-weight:900;padding:12px;margin-bottom:12px;color:var(--blue-dark);letter-spacing:-.5px}
+.sidebar-logo span{color:var(--blue)}
+.sidebar-section{font-size:.7rem;color:var(--muted);padding:16px 12px 6px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--muted);font-weight:500;font-size:.9rem;transition:all .15s}
+.sidebar a:hover{background:var(--blue-light);color:var(--blue)}
+.sidebar a.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+
+.main{padding:28px 32px;overflow-y:auto;max-height:100vh}
+
+/* TOPBAR */
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.topbar h1{font-size:1.5rem;font-weight:800;color:var(--text)}
+.topbar-sub{font-size:.85rem;color:var(--muted);font-weight:400}
+
+/* BUTTONS */
+.btn{padding:9px 20px;border-radius:10px;border:none;font-family:inherit;font-weight:600;cursor:pointer;font-size:.88rem;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
 .btn-blue{background:var(--blue);color:#fff}
-.btn-green{background:var(--green);color:#000}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
-.btn-sm{padding:6px 14px;font-size:.8rem}
-.btn-red{background:var(--red);color:#fff}
+.btn-blue:hover{background:var(--blue-dark)}
+.btn-green{background:var(--green);color:#fff}
+.btn-outline{background:#fff;border:1.5px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.btn-sm{padding:6px 12px;font-size:.8rem;border-radius:8px}
+.btn-icon{width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#fff;border:1.5px solid var(--border);cursor:pointer;font-size:.9rem;transition:.15s}
+.btn-icon:hover{border-color:var(--blue);background:var(--blue-light)}
 
-/* KPI CARDS */
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
-.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.kpi-label{font-size:.85rem;color:var(--muted);margin-bottom:8px}
-.kpi-value{font-size:2rem;font-weight:900}
-.kpi-sub{font-size:.8rem;color:var(--green);margin-top:4px}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.kpi-label{font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:500}
+.kpi-value{font-size:1.8rem;font-weight:900;color:var(--text)}
+.kpi-sub{font-size:.75rem;color:var(--green);margin-top:4px;font-weight:600}
 
-/* TABLE */
-.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.table-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
-.table-header h2{font-size:1.1rem;font-weight:700}
+/* CARDS / TABLE */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
+.card-header h2{font-size:1rem;font-weight:700}
 table{width:100%;border-collapse:collapse}
-th{text-align:right;padding:12px 20px;font-size:.8rem;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.5px}
-td{padding:14px 20px;border-bottom:1px solid var(--border);font-size:.95rem}
+th{text-align:right;padding:10px 20px;font-size:.75rem;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);background:var(--bg)}
+td{padding:12px 20px;border-bottom:1px solid #F3F4F6;font-size:.9rem}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(255,255,255,.02)}
-.badge{display:inline-block;padding:4px 12px;border-radius:50px;font-size:.75rem;font-weight:700}
-.badge-green{background:rgba(52,211,153,.15);color:var(--green)}
-.badge-orange{background:rgba(245,158,11,.15);color:var(--orange)}
-.badge-blue{background:rgba(76,139,245,.15);color:var(--blue)}
-.badge-red{background:rgba(239,68,68,.15);color:var(--red)}
-.badge-gray{background:rgba(156,163,175,.15);color:var(--muted)}
-.client-name{font-weight:700;color:#fff}
-.client-org{font-size:.85rem;color:var(--muted)}
+tr:hover td{background:var(--blue-light)}
+.client-name{font-weight:700;color:var(--text)}
+.client-org{font-size:.8rem;color:var(--muted)}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:.72rem;font-weight:700}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-orange{background:var(--orange-light);color:var(--orange)}
+.badge-blue{background:var(--blue-50);color:var(--blue)}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-gray{background:#F3F4F6;color:var(--muted)}
 
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
-.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto}
-.modal h2{margin-bottom:20px;font-size:1.3rem}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;margin-bottom:6px;font-size:.85rem;color:var(--muted);font-weight:500}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;font-size:.95rem}
-.form-group select{appearance:none}
-.form-group textarea{min-height:80px;resize:vertical}
-.form-actions{display:flex;gap:12px;margin-top:24px}
-
-/* TIMELINE */
-.timeline{padding:20px}
-.tl-item{display:flex;gap:12px;padding-bottom:16px;position:relative}
-.tl-item::before{content:'';position:absolute;right:7px;top:20px;bottom:0;width:2px;background:var(--border)}
-.tl-item:last-child::before{display:none}
-.tl-dot{width:16px;height:16px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px}
-.tl-content{flex:1}
-.tl-date{font-size:.75rem;color:var(--muted)}
-.tl-text{font-size:.9rem;margin-top:2px}
+.modal{background:var(--card);border-radius:16px;padding:28px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal h2{margin-bottom:20px;font-size:1.2rem;font-weight:800}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;margin-bottom:5px;font-size:.82rem;color:var(--muted);font-weight:600}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:var(--text);font-family:inherit;font-size:.9rem;transition:border .15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.form-group textarea{min-height:70px;resize:vertical}
+.form-actions{display:flex;gap:10px;margin-top:20px}
 
 /* DETAIL */
-.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
-.detail-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.detail-card h3{font-size:1rem;margin-bottom:12px;color:var(--muted)}
-.detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.9rem}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.detail-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.detail-card h3{font-size:.85rem;margin-bottom:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F3F4F6;font-size:.9rem}
 .detail-row:last-child{border-bottom:none}
 
-/* RESPONSIVE */
+/* TIMELINE */
+.timeline{padding:16px 20px}
+.tl-item{display:flex;gap:12px;padding-bottom:14px;position:relative}
+.tl-item::before{content:'';position:absolute;right:5px;top:18px;bottom:0;width:2px;background:var(--border)}
+.tl-item:last-child::before{display:none}
+.tl-dot{width:12px;height:12px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:5px;border:2px solid var(--blue-50)}
+.tl-content{flex:1}
+.tl-date{font-size:.72rem;color:var(--muted);font-weight:500}
+.tl-text{font-size:.88rem;margin-top:2px}
+
+/* ONBOARDING STEPS */
+.step-list{padding:20px}
+.step{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:10px;margin-bottom:8px;transition:.15s;border:1px solid transparent}
+.step:hover{background:var(--blue-light);border-color:var(--border)}
+.step-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.8rem;cursor:pointer;transition:.15s;flex-shrink:0}
+.step-check.done{background:var(--green);border-color:var(--green);color:#fff}
+.step-info{flex:1}
+.step-title{font-weight:600;font-size:.92rem}
+.step-desc{font-size:.8rem;color:var(--muted)}
+.step-client{font-size:.75rem;color:var(--blue);font-weight:600}
+
+/* BILLING */
+.billing-row{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid #F3F4F6}
+.billing-row:last-child{border-bottom:none}
+.billing-row:hover{background:var(--blue-light)}
+.billing-amount{font-weight:800;font-size:1rem}
+.billing-positive{color:var(--green)}
+.billing-pending{color:var(--orange)}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-icon{font-size:2.5rem;margin-bottom:12px}
+.empty-text{font-size:.95rem}
+
+/* PAGE HIDDEN */
+.page{display:none}
+.page.active{display:block}
+
 @media(max-width:768px){
   .layout{grid-template-columns:1fr}
   .sidebar{display:none}
   .kpis{grid-template-columns:repeat(2,1fr)}
   .detail-grid{grid-template-columns:1fr}
+  .main{padding:16px}
 }
 </style>
 </head>
 <body>
 
 <div class="layout">
-  <!-- SIDEBAR -->
-  <nav class="sidebar">
-    <div class="sidebar-logo">Kfir<span>OS</span> Admin</div>
-    <a href="#" class="active" onclick="showPage('dashboard')">📊 לוח בקרה</a>
-    <a href="#" onclick="showPage('clients')">🏢 לקוחות</a>
-    <a href="#" onclick="showPage('billing')">💰 חיובים</a>
-    <a href="#" onclick="showPage('onboarding')">🚀 הטמעה</a>
-    <a href="#" onclick="showPage('support')">🎧 תמיכה</a>
-    <div style="flex:1"></div>
-    <a href="index.html">🌐 אתר שיווק</a>
-  </nav>
+<nav class="sidebar">
+  <div class="sidebar-logo">Kfir<span>OS</span></div>
+  <div class="sidebar-section">ראשי</div>
+  <a href="#" class="active" data-page="dashboard">📊 לוח בקרה</a>
+  <a href="#" data-page="clients">🏢 לקוחות</a>
+  <div class="sidebar-section">ניהול</div>
+  <a href="#" data-page="billing">💰 חיובים</a>
+  <a href="#" data-page="onboarding">🚀 הטמעה</a>
+  <a href="#" data-page="support">🎧 תמיכה</a>
+  <div style="flex:1"></div>
+  <a href="index.html">🌐 אתר שיווק</a>
+</nav>
 
-  <!-- MAIN -->
-  <div class="main">
+<div class="main">
 
-    <!-- DASHBOARD PAGE -->
-    <div id="page-dashboard">
-      <div class="topbar">
-        <h1>לוח בקרה</h1>
-        <div class="topbar-actions">
-          <button class="btn btn-blue" onclick="openAddClient()">+ לקוח חדש</button>
-        </div>
-      </div>
-
-      <div class="kpis" id="kpis"></div>
-
-      <div class="table-wrap">
-        <div class="table-header">
-          <h2>לקוחות פעילים</h2>
-        </div>
-        <table>
-          <thead><tr><th>לקוח</th><th>חבילה</th><th>סטטוס</th><th>MRR</th><th>ילדים</th><th>התחלה</th><th>פעולות</th></tr></thead>
-          <tbody id="clients-table"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- CLIENT DETAIL PAGE -->
-    <div id="page-detail" style="display:none">
-      <div class="topbar">
-        <h1 id="detail-title"></h1>
-        <div class="topbar-actions">
-          <button class="btn btn-ghost" onclick="showPage('dashboard')">← חזרה</button>
-          <button class="btn btn-blue" onclick="editCurrentClient()">עריכה</button>
-        </div>
-      </div>
-      <div class="detail-grid" id="detail-content"></div>
-      <div class="table-wrap">
-        <div class="table-header"><h2>היסטוריה</h2><button class="btn btn-sm btn-ghost" onclick="addNote()">+ הערה</button></div>
-        <div id="detail-timeline"></div>
-      </div>
-    </div>
-
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="topbar"><div><h1>לוח בקרה</h1><div class="topbar-sub">ברוך הבא, אמיתי</div></div>
+  <button class="btn btn-blue" onclick="openAddClient()">+ לקוח חדש</button></div>
+  <div class="kpis" id="kpis"></div>
+  <div class="card">
+    <div class="card-header"><h2>לקוחות</h2></div>
+    <table><thead><tr><th>לקוח</th><th>חבילה</th><th>סטטוס</th><th>MRR</th><th>ילדים</th><th>התחלה</th><th></th></tr></thead>
+    <tbody id="clients-table"></tbody></table>
   </div>
 </div>
 
-<!-- ADD/EDIT CLIENT MODAL -->
+<!-- CLIENTS LIST -->
+<div class="page" id="page-clients">
+  <div class="topbar"><h1>לקוחות</h1><button class="btn btn-blue" onclick="openAddClient()">+ לקוח חדש</button></div>
+  <div class="card">
+    <div class="card-header"><h2>כל הלקוחות</h2><div id="clients-count" style="font-size:.85rem;color:var(--muted)"></div></div>
+    <table><thead><tr><th>לקוח</th><th>חבילה</th><th>סטטוס</th><th>טלפון</th><th>מייל</th><th>ילדים</th><th></th></tr></thead>
+    <tbody id="clients-full-table"></tbody></table>
+  </div>
+</div>
+
+<!-- CLIENT DETAIL -->
+<div class="page" id="page-detail">
+  <div class="topbar"><h1 id="detail-title"></h1>
+  <div style="display:flex;gap:8px"><button class="btn btn-outline" onclick="navTo('clients')">← חזרה</button><button class="btn btn-blue" onclick="editCurrentClient()">עריכה</button></div></div>
+  <div class="detail-grid" id="detail-content"></div>
+  <div class="card"><div class="card-header"><h2>היסטוריה</h2><button class="btn btn-sm btn-outline" onclick="addNote()">+ הערה</button></div><div id="detail-timeline"></div></div>
+</div>
+
+<!-- BILLING -->
+<div class="page" id="page-billing">
+  <div class="topbar"><h1>חיובים</h1></div>
+  <div class="kpis" id="billing-kpis"></div>
+  <div class="card">
+    <div class="card-header"><h2>חיובים חודשיים</h2></div>
+    <div id="billing-list"></div>
+  </div>
+</div>
+
+<!-- ONBOARDING -->
+<div class="page" id="page-onboarding">
+  <div class="topbar"><h1>הטמעה</h1></div>
+  <div class="kpis" id="onboard-kpis"></div>
+  <div class="card">
+    <div class="card-header"><h2>משימות הטמעה</h2></div>
+    <div class="step-list" id="onboard-steps"></div>
+  </div>
+</div>
+
+<!-- SUPPORT -->
+<div class="page" id="page-support">
+  <div class="topbar"><h1>תמיכה</h1><button class="btn btn-blue" onclick="addTicket()">+ פנייה חדשה</button></div>
+  <div class="kpis" id="support-kpis"></div>
+  <div class="card">
+    <div class="card-header"><h2>פניות</h2></div>
+    <table><thead><tr><th>נושא</th><th>לקוח</th><th>סטטוס</th><th>תאריך</th><th>עדיפות</th></tr></thead>
+    <tbody id="support-table"></tbody></table>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- MODAL -->
 <div class="modal-overlay" id="modal">
-  <div class="modal">
-    <h2 id="modal-title">לקוח חדש</h2>
-    <form id="client-form" onsubmit="saveClient(event)">
-      <input type="hidden" id="f-id">
+<div class="modal">
+  <h2 id="modal-title">לקוח חדש</h2>
+  <form id="client-form" onsubmit="saveClient(event)">
+    <input type="hidden" id="f-id">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div class="form-group"><label>שם איש קשר</label><input id="f-name" required></div>
       <div class="form-group"><label>ארגון</label><input id="f-org" required></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div class="form-group"><label>טלפון</label><input id="f-phone" type="tel"></div>
       <div class="form-group"><label>מייל</label><input id="f-email" type="email"></div>
-      <div class="form-group"><label>חבילה</label>
-        <select id="f-plan">
-          <option value="BASIC">BASIC - ₪3,500</option>
-          <option value="PRO">PRO - ₪8,500</option>
-          <option value="ENTERPRISE">ENTERPRISE - ₪22,000</option>
-        </select>
-      </div>
-      <div class="form-group"><label>מספר ילדים</label><input id="f-kids" type="number" value="0"></div>
-      <div class="form-group"><label>סטטוס</label>
-        <select id="f-status">
-          <option value="lead">ליד</option>
-          <option value="trial">ניסיון</option>
-          <option value="active">פעיל</option>
-          <option value="churned">עזב</option>
-        </select>
-      </div>
-      <div class="form-group"><label>הערות</label><textarea id="f-notes"></textarea></div>
-      <div class="form-actions">
-        <button type="submit" class="btn btn-green">שמור</button>
-        <button type="button" class="btn btn-ghost" onclick="closeModal()">ביטול</button>
-      </div>
-    </form>
-  </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div class="form-group"><label>חבילה</label><select id="f-plan"><option value="BASIC">BASIC</option><option value="PRO">PRO</option><option value="ENTERPRISE">ENTERPRISE</option></select></div>
+      <div class="form-group"><label>ילדים</label><input id="f-kids" type="number" value="0"></div>
+      <div class="form-group"><label>סטטוס</label><select id="f-status"><option value="lead">ליד</option><option value="trial">ניסיון</option><option value="active">פעיל</option><option value="churned">עזב</option></select></div>
+    </div>
+    <div class="form-group"><label>הערות</label><textarea id="f-notes" rows="2"></textarea></div>
+    <div class="form-actions"><button type="submit" class="btn btn-blue" style="flex:1">שמור</button><button type="button" class="btn btn-outline" onclick="closeModal()">ביטול</button></div>
+  </form>
+</div>
 </div>
 
 <script>
-const PLANS = {BASIC:3500, PRO:8500, ENTERPRISE:22000};
-const STATUS_MAP = {lead:{text:'ליד',cls:'badge-gray'},trial:{text:'ניסיון',cls:'badge-orange'},active:{text:'פעיל',cls:'badge-green'},churned:{text:'עזב',cls:'badge-red'}};
-const PLAN_CLS = {BASIC:'badge-green',PRO:'badge-blue',ENTERPRISE:'badge-orange'};
+const PLANS={BASIC:3500,PRO:8500,ENTERPRISE:22000};
+const STATUS_MAP={lead:{t:'ליד',c:'badge-gray'},trial:{t:'ניסיון',c:'badge-orange'},active:{t:'פעיל',c:'badge-green'},churned:{t:'עזב',c:'badge-red'}};
+const PLAN_CLS={BASIC:'badge-green',PRO:'badge-blue',ENTERPRISE:'badge-orange'};
+const today=()=>new Date().toISOString().split('T')[0];
 
-function getClients(){ return JSON.parse(localStorage.getItem('kfiros_clients')||'[]') }
-function saveClients(c){ localStorage.setItem('kfiros_clients',JSON.stringify(c)) }
+function getClients(){return JSON.parse(localStorage.getItem('kfiros_clients')||'[]')}
+function saveClients(c){localStorage.setItem('kfiros_clients',JSON.stringify(c))}
+function getTickets(){return JSON.parse(localStorage.getItem('kfiros_tickets')||'[]')}
+function saveTickets(t){localStorage.setItem('kfiros_tickets',JSON.stringify(t))}
+function getSteps(){return JSON.parse(localStorage.getItem('kfiros_steps')||'[]')}
+function saveSteps(s){localStorage.setItem('kfiros_steps',JSON.stringify(s))}
 
-// Seed data
+// SEED
 if(!localStorage.getItem('kfiros_clients')){
   saveClients([
-    {id:1,name:'שי כהן',org:'המשכיל',phone:'050-1234567',email:'shai@hamaskil.co.il',plan:'ENTERPRISE',kids:5000,status:'lead',notes:'5,000 ילדים, רשת ארצית',created:'2026-06-01',history:[{date:'2026-06-01',text:'פגישת היכרות ראשונה'}]},
-    {id:2,name:'דוד גוילי',org:'תנופה הפקות',phone:'052-7654321',email:'david@tnufa.co.il',plan:'BASIC',kids:200,status:'lead',notes:'צהרון קטן, מעוניין להתחיל מהר',created:'2026-06-01',history:[{date:'2026-06-01',text:'פגישת היכרות ראשונה'}]},
+    {id:1,name:'שי כהן',org:'המשכיל',phone:'050-1234567',email:'shai@hamaskil.co.il',plan:'ENTERPRISE',kids:5000,status:'lead',notes:'5,000 ילדים, רשת ארצית. פגישה ראשונה 1/6',created:'2026-06-01',history:[{date:'2026-06-01',text:'פגישת היכרות ראשונה'}]},
+    {id:2,name:'דוד גוילי',org:'תנופה הפקות',phone:'052-7654321',email:'david@tnufa.co.il',plan:'BASIC',kids:200,status:'lead',notes:'צהרון קטן, רוצה להתחיל מהר',created:'2026-06-01',history:[{date:'2026-06-01',text:'פגישת היכרות ראשונה'}]},
     {id:3,name:'אילנה כוכבי',org:'אופק',phone:'054-9876543',email:'ilana@ofek.org.il',plan:'PRO',kids:800,status:'lead',notes:'800 ילדים, צריכה ניצנים',created:'2026-06-01',history:[{date:'2026-06-01',text:'פגישת היכרות ראשונה'}]},
   ]);
 }
-
-let currentClientId = null;
-
-function render(){
-  const clients = getClients();
-  const active = clients.filter(c=>c.status==='active');
-  const mrr = clients.filter(c=>c.status!=='churned').reduce((s,c)=>s+PLANS[c.plan],0);
-  const totalKids = clients.reduce((s,c)=>s+Number(c.kids||0),0);
-
-  document.getElementById('kpis').innerHTML = `
-    <div class="kpi"><div class="kpi-label">לקוחות</div><div class="kpi-value">${clients.length}</div><div class="kpi-sub">${active.length} פעילים</div></div>
-    <div class="kpi"><div class="kpi-label">MRR</div><div class="kpi-value">₪${mrr.toLocaleString()}</div><div class="kpi-sub">הכנסה חודשית חוזרת</div></div>
-    <div class="kpi"><div class="kpi-label">ARR</div><div class="kpi-value">₪${(mrr*12).toLocaleString()}</div><div class="kpi-sub">הכנסה שנתית</div></div>
-    <div class="kpi"><div class="kpi-label">ילדים</div><div class="kpi-value">${totalKids.toLocaleString()}</div><div class="kpi-sub">סה"כ במערכת</div></div>
-  `;
-
-  document.getElementById('clients-table').innerHTML = clients.map(c=>`
-    <tr onclick="showClient(${c.id})" style="cursor:pointer">
-      <td><div class="client-name">${c.name}</div><div class="client-org">${c.org}</div></td>
-      <td><span class="badge ${PLAN_CLS[c.plan]}">${c.plan}</span></td>
-      <td><span class="badge ${STATUS_MAP[c.status].cls}">${STATUS_MAP[c.status].text}</span></td>
-      <td>₪${PLANS[c.plan].toLocaleString()}</td>
-      <td>${Number(c.kids||0).toLocaleString()}</td>
-      <td>${c.created}</td>
-      <td><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();editClient(${c.id})">✏️</button> <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();deleteClient(${c.id})">🗑️</button></td>
-    </tr>
-  `).join('');
+if(!localStorage.getItem('kfiros_tickets')){
+  saveTickets([
+    {id:1,subject:'הגדרת אתר הרשמה',client:'תנופה הפקות',status:'open',date:'2026-06-01',priority:'high'},
+    {id:2,subject:'חיבור iCredit',client:'המשכיל',status:'open',date:'2026-06-01',priority:'high'},
+    {id:3,subject:'ייבוא נתוני ילדים',client:'אופק',status:'pending',date:'2026-06-01',priority:'medium'},
+  ]);
+}
+if(!localStorage.getItem('kfiros_steps')){
+  const makeSteps=(client)=>[
+    {id:Date.now()+Math.random(),client,title:'חתימה על חוזה',desc:'חוזה 12 חודש',done:false},
+    {id:Date.now()+Math.random(),client,title:'הגדרת מותג',desc:'לוגו, צבעים, שם',done:false},
+    {id:Date.now()+Math.random(),client,title:'הקמת אתר הרשמה',desc:'דומיין + עיצוב',done:false},
+    {id:Date.now()+Math.random(),client,title:'חיבור iCredit',desc:'סליקת אשראי',done:false},
+    {id:Date.now()+Math.random(),client,title:'ייבוא נתוני ילדים',desc:'מאקסל/CSV',done:false},
+    {id:Date.now()+Math.random(),client,title:'הדרכת צוות',desc:'הדרכה למשרד',done:false},
+    {id:Date.now()+Math.random(),client,title:'Go Live',desc:'שיגור ומעקב',done:false},
+  ];
+  saveSteps([...makeSteps('המשכיל'),...makeSteps('תנופה הפקות'),...makeSteps('אופק')]);
 }
 
-function showPage(page){
+let currentClientId=null;
+
+// NAV
+document.querySelectorAll('.sidebar a[data-page]').forEach(a=>{
+  a.addEventListener('click',e=>{e.preventDefault();navTo(a.dataset.page)});
+});
+function navTo(page){
   document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
-  event?.target?.classList?.add('active');
-  document.getElementById('page-dashboard').style.display = page==='dashboard'?'block':'none';
-  document.getElementById('page-detail').style.display = page==='detail'?'block':'none';
-  if(page==='dashboard') render();
+  const link=document.querySelector(`.sidebar a[data-page="${page}"]`);
+  if(link)link.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el=document.getElementById('page-'+page);
+  if(el)el.classList.add('active');
+  if(page==='dashboard')renderDashboard();
+  if(page==='clients')renderClients();
+  if(page==='billing')renderBilling();
+  if(page==='onboarding')renderOnboarding();
+  if(page==='support')renderSupport();
 }
 
+// DASHBOARD
+function renderDashboard(){
+  const clients=getClients();
+  const active=clients.filter(c=>c.status==='active');
+  const mrr=clients.filter(c=>c.status!=='churned').reduce((s,c)=>s+PLANS[c.plan],0);
+  const kids=clients.reduce((s,c)=>s+Number(c.kids||0),0);
+  document.getElementById('kpis').innerHTML=`
+    <div class="kpi"><div class="kpi-label">לקוחות</div><div class="kpi-value">${clients.length}</div><div class="kpi-sub">${active.length} פעילים</div></div>
+    <div class="kpi"><div class="kpi-label">MRR</div><div class="kpi-value">₪${mrr.toLocaleString()}</div><div class="kpi-sub">הכנסה חודשית</div></div>
+    <div class="kpi"><div class="kpi-label">ARR</div><div class="kpi-value">₪${(mrr*12).toLocaleString()}</div><div class="kpi-sub">הכנסה שנתית</div></div>
+    <div class="kpi"><div class="kpi-label">ילדים</div><div class="kpi-value">${kids.toLocaleString()}</div><div class="kpi-sub">סה"כ במערכת</div></div>`;
+  document.getElementById('clients-table').innerHTML=clients.map(c=>clientRow(c,'short')).join('');
+}
+
+function clientRow(c,mode){
+  const s=STATUS_MAP[c.status];
+  if(mode==='short') return`<tr onclick="showClient(${c.id})" style="cursor:pointer">
+    <td><div class="client-name">${c.name}</div><div class="client-org">${c.org}</div></td>
+    <td><span class="badge ${PLAN_CLS[c.plan]}">${c.plan}</span></td>
+    <td><span class="badge ${s.c}">${s.t}</span></td>
+    <td style="font-weight:700">₪${PLANS[c.plan].toLocaleString()}</td>
+    <td>${Number(c.kids||0).toLocaleString()}</td>
+    <td style="color:var(--muted)">${c.created}</td>
+    <td><button class="btn-icon" onclick="event.stopPropagation();editClient(${c.id})">✏️</button></td></tr>`;
+  return`<tr onclick="showClient(${c.id})" style="cursor:pointer">
+    <td><div class="client-name">${c.name}</div><div class="client-org">${c.org}</div></td>
+    <td><span class="badge ${PLAN_CLS[c.plan]}">${c.plan}</span></td>
+    <td><span class="badge ${s.c}">${s.t}</span></td>
+    <td style="color:var(--muted)">${c.phone||'-'}</td>
+    <td style="color:var(--muted);font-size:.82rem">${c.email||'-'}</td>
+    <td>${Number(c.kids||0).toLocaleString()}</td>
+    <td><button class="btn-icon" onclick="event.stopPropagation();editClient(${c.id})">✏️</button> <button class="btn-icon" onclick="event.stopPropagation();deleteClient(${c.id})">🗑️</button></td></tr>`;
+}
+
+// CLIENTS PAGE
+function renderClients(){
+  const clients=getClients();
+  document.getElementById('clients-count').textContent=`${clients.length} לקוחות`;
+  document.getElementById('clients-full-table').innerHTML=clients.map(c=>clientRow(c,'full')).join('');
+}
+
+// CLIENT DETAIL
 function showClient(id){
-  const c = getClients().find(x=>x.id===id);
-  if(!c) return;
-  currentClientId = id;
-  document.getElementById('detail-title').textContent = `${c.name} — ${c.org}`;
-  document.getElementById('detail-content').innerHTML = `
-    <div class="detail-card"><h3>פרטי לקוח</h3>
-      <div class="detail-row"><span>שם</span><span>${c.name}</span></div>
+  const c=getClients().find(x=>x.id===id);if(!c)return;
+  currentClientId=id;
+  document.getElementById('detail-title').textContent=`${c.name} — ${c.org}`;
+  document.getElementById('detail-content').innerHTML=`
+    <div class="detail-card"><h3>פרטי קשר</h3>
+      <div class="detail-row"><span>שם</span><strong>${c.name}</strong></div>
       <div class="detail-row"><span>ארגון</span><span>${c.org}</span></div>
-      <div class="detail-row"><span>טלפון</span><span><a href="tel:${c.phone}" style="color:var(--blue)">${c.phone}</a></span></div>
-      <div class="detail-row"><span>מייל</span><span><a href="mailto:${c.email}" style="color:var(--blue)">${c.email}</a></span></div>
-    </div>
+      <div class="detail-row"><span>טלפון</span><a href="tel:${c.phone}" style="color:var(--blue);font-weight:600">${c.phone}</a></div>
+      <div class="detail-row"><span>מייל</span><a href="mailto:${c.email}" style="color:var(--blue)">${c.email}</a></div></div>
     <div class="detail-card"><h3>מנוי</h3>
       <div class="detail-row"><span>חבילה</span><span class="badge ${PLAN_CLS[c.plan]}">${c.plan}</span></div>
-      <div class="detail-row"><span>סטטוס</span><span class="badge ${STATUS_MAP[c.status].cls}">${STATUS_MAP[c.status].text}</span></div>
-      <div class="detail-row"><span>MRR</span><span>₪${PLANS[c.plan].toLocaleString()}</span></div>
+      <div class="detail-row"><span>סטטוס</span><span class="badge ${STATUS_MAP[c.status].c}">${STATUS_MAP[c.status].t}</span></div>
+      <div class="detail-row"><span>MRR</span><strong>₪${PLANS[c.plan].toLocaleString()}</strong></div>
       <div class="detail-row"><span>ילדים</span><span>${Number(c.kids||0).toLocaleString()}</span></div>
-      <div class="detail-row"><span>תאריך התחלה</span><span>${c.created}</span></div>
-    </div>
-    <div class="detail-card" style="grid-column:1/-1"><h3>הערות</h3><p style="color:var(--muted);font-size:.95rem">${c.notes||'אין הערות'}</p></div>
-  `;
-  document.getElementById('detail-timeline').innerHTML = `<div class="timeline">${(c.history||[]).map(h=>`
-    <div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-date">${h.date}</div><div class="tl-text">${h.text}</div></div></div>
-  `).join('')}</div>`;
-  showPage('detail');
+      <div class="detail-row"><span>תאריך התחלה</span><span>${c.created}</span></div></div>
+    <div class="detail-card" style="grid-column:1/-1"><h3>הערות</h3><p style="color:var(--muted);font-size:.9rem;line-height:1.6">${c.notes||'אין הערות'}</p></div>`;
+  document.getElementById('detail-timeline').innerHTML=`<div class="timeline">${(c.history||[]).map(h=>`<div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-date">${h.date}</div><div class="tl-text">${h.text}</div></div></div>`).join('')}</div>`;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-detail').classList.add('active');
 }
 
+// BILLING
+function renderBilling(){
+  const clients=getClients().filter(c=>c.status!=='churned');
+  const mrr=clients.reduce((s,c)=>s+PLANS[c.plan],0);
+  const paid=clients.filter(c=>c.status==='active').reduce((s,c)=>s+PLANS[c.plan],0);
+  const pending=mrr-paid;
+  document.getElementById('billing-kpis').innerHTML=`
+    <div class="kpi"><div class="kpi-label">MRR כולל</div><div class="kpi-value">₪${mrr.toLocaleString()}</div></div>
+    <div class="kpi"><div class="kpi-label">שולם</div><div class="kpi-value" style="color:var(--green)">₪${paid.toLocaleString()}</div></div>
+    <div class="kpi"><div class="kpi-label">ממתין</div><div class="kpi-value" style="color:var(--orange)">₪${pending.toLocaleString()}</div></div>
+    <div class="kpi"><div class="kpi-label">ARR צפוי</div><div class="kpi-value">₪${(mrr*12).toLocaleString()}</div></div>`;
+  document.getElementById('billing-list').innerHTML=clients.map(c=>{
+    const paid=c.status==='active';
+    return`<div class="billing-row">
+      <div><div class="client-name">${c.org}</div><div class="client-org">${c.name} · ${c.plan}</div></div>
+      <div><span class="badge ${paid?'badge-green':'badge-orange'}">${paid?'שולם':'ממתין'}</span></div>
+      <div class="billing-amount ${paid?'billing-positive':'billing-pending'}">₪${PLANS[c.plan].toLocaleString()}</div>
+    </div>`;
+  }).join('');
+}
+
+// ONBOARDING
+function renderOnboarding(){
+  const steps=getSteps();
+  const done=steps.filter(s=>s.done).length;
+  const total=steps.length;
+  const pct=total?Math.round(done/total*100):0;
+  const clients=[...new Set(steps.map(s=>s.client))];
+  document.getElementById('onboard-kpis').innerHTML=`
+    <div class="kpi"><div class="kpi-label">התקדמות כללית</div><div class="kpi-value">${pct}%</div><div class="kpi-sub">${done}/${total} משימות</div></div>
+    <div class="kpi"><div class="kpi-label">לקוחות בהטמעה</div><div class="kpi-value">${clients.length}</div></div>
+    <div class="kpi"><div class="kpi-label">הושלם</div><div class="kpi-value" style="color:var(--green)">${done}</div></div>
+    <div class="kpi"><div class="kpi-label">נותר</div><div class="kpi-value" style="color:var(--orange)">${total-done}</div></div>`;
+  document.getElementById('onboard-steps').innerHTML=steps.map(s=>`
+    <div class="step">
+      <div class="step-check ${s.done?'done':''}" onclick="toggleStep('${s.id}')">${s.done?'✓':''}</div>
+      <div class="step-info"><div class="step-title" style="${s.done?'text-decoration:line-through;opacity:.5':''}">${s.title}</div><div class="step-desc">${s.desc}</div><div class="step-client">${s.client}</div></div>
+    </div>`).join('');
+}
+function toggleStep(id){
+  const steps=getSteps();
+  const s=steps.find(x=>String(x.id)===String(id));
+  if(s)s.done=!s.done;
+  saveSteps(steps);
+  renderOnboarding();
+}
+
+// SUPPORT
+function renderSupport(){
+  const tickets=getTickets();
+  const open=tickets.filter(t=>t.status==='open').length;
+  const pending=tickets.filter(t=>t.status==='pending').length;
+  const closed=tickets.filter(t=>t.status==='closed').length;
+  document.getElementById('support-kpis').innerHTML=`
+    <div class="kpi"><div class="kpi-label">סה"כ פניות</div><div class="kpi-value">${tickets.length}</div></div>
+    <div class="kpi"><div class="kpi-label">פתוחות</div><div class="kpi-value" style="color:var(--red)">${open}</div></div>
+    <div class="kpi"><div class="kpi-label">בטיפול</div><div class="kpi-value" style="color:var(--orange)">${pending}</div></div>
+    <div class="kpi"><div class="kpi-label">נסגרו</div><div class="kpi-value" style="color:var(--green)">${closed}</div></div>`;
+  const prCls={high:'badge-red',medium:'badge-orange',low:'badge-green'};
+  const prTxt={high:'דחוף',medium:'רגיל',low:'נמוך'};
+  const stCls={open:'badge-red',pending:'badge-orange',closed:'badge-green'};
+  const stTxt={open:'פתוח',pending:'בטיפול',closed:'נסגר'};
+  document.getElementById('support-table').innerHTML=tickets.map(t=>`
+    <tr><td style="font-weight:600">${t.subject}</td><td>${t.client}</td>
+    <td><span class="badge ${stCls[t.status]}">${stTxt[t.status]}</span></td>
+    <td style="color:var(--muted)">${t.date}</td>
+    <td><span class="badge ${prCls[t.priority]}">${prTxt[t.priority]}</span></td></tr>`).join('');
+}
+function addTicket(){
+  const subject=prompt('נושא הפנייה:');if(!subject)return;
+  const client=prompt('לקוח:');if(!client)return;
+  const tickets=getTickets();
+  tickets.unshift({id:Date.now(),subject,client,status:'open',date:today(),priority:'medium'});
+  saveTickets(tickets);renderSupport();
+}
+
+// CRUD
 function openAddClient(){
   document.getElementById('modal-title').textContent='לקוח חדש';
   document.getElementById('client-form').reset();
   document.getElementById('f-id').value='';
   document.getElementById('modal').classList.add('open');
 }
-
 function editClient(id){
-  const c=getClients().find(x=>x.id===id);
-  if(!c)return;
+  const c=getClients().find(x=>x.id===id);if(!c)return;
   document.getElementById('modal-title').textContent='עריכת לקוח';
   document.getElementById('f-id').value=c.id;
   document.getElementById('f-name').value=c.name;
@@ -290,60 +463,27 @@ function editClient(id){
   document.getElementById('f-notes').value=c.notes||'';
   document.getElementById('modal').classList.add('open');
 }
-
 function editCurrentClient(){if(currentClientId)editClient(currentClientId)}
-
 function closeModal(){document.getElementById('modal').classList.remove('open')}
-
 function saveClient(e){
   e.preventDefault();
-  const clients=getClients();
-  const id=document.getElementById('f-id').value;
-  const data={
-    name:document.getElementById('f-name').value,
-    org:document.getElementById('f-org').value,
-    phone:document.getElementById('f-phone').value,
-    email:document.getElementById('f-email').value,
-    plan:document.getElementById('f-plan').value,
-    kids:parseInt(document.getElementById('f-kids').value)||0,
-    status:document.getElementById('f-status').value,
-    notes:document.getElementById('f-notes').value,
-  };
-  if(id){
-    const idx=clients.findIndex(c=>c.id==id);
-    if(idx>=0){clients[idx]={...clients[idx],...data};clients[idx].history.push({date:new Date().toISOString().split('T')[0],text:'עודכנו פרטי לקוח'})}
-  } else {
-    data.id=Date.now();
-    data.created=new Date().toISOString().split('T')[0];
-    data.history=[{date:data.created,text:'לקוח נוסף למערכת'}];
-    clients.push(data);
-  }
-  saveClients(clients);
-  closeModal();
-  render();
-  if(currentClientId && id) showClient(parseInt(id));
+  const clients=getClients(),id=document.getElementById('f-id').value;
+  const data={name:document.getElementById('f-name').value,org:document.getElementById('f-org').value,phone:document.getElementById('f-phone').value,email:document.getElementById('f-email').value,plan:document.getElementById('f-plan').value,kids:parseInt(document.getElementById('f-kids').value)||0,status:document.getElementById('f-status').value,notes:document.getElementById('f-notes').value};
+  if(id){const idx=clients.findIndex(c=>c.id==id);if(idx>=0){clients[idx]={...clients[idx],...data};clients[idx].history.push({date:today(),text:'עודכנו פרטי לקוח'})}}
+  else{data.id=Date.now();data.created=today();data.history=[{date:data.created,text:'לקוח נוסף למערכת'}];clients.push(data)}
+  saveClients(clients);closeModal();renderDashboard();renderClients();
+  if(currentClientId&&id)showClient(parseInt(id));
 }
-
-function deleteClient(id){
-  if(!confirm('למחוק לקוח?'))return;
-  saveClients(getClients().filter(c=>c.id!==id));
-  render();
-}
-
+function deleteClient(id){if(!confirm('למחוק לקוח?'))return;saveClients(getClients().filter(c=>c.id!==id));renderDashboard();renderClients()}
 function addNote(){
-  const text=prompt('הערה חדשה:');
-  if(!text||!currentClientId)return;
-  const clients=getClients();
-  const c=clients.find(x=>x.id===currentClientId);
-  if(!c)return;
-  c.history=c.history||[];
-  c.history.unshift({date:new Date().toISOString().split('T')[0],text});
-  saveClients(clients);
-  showClient(currentClientId);
+  const text=prompt('הערה חדשה:');if(!text||!currentClientId)return;
+  const clients=getClients(),c=clients.find(x=>x.id===currentClientId);if(!c)return;
+  c.history=c.history||[];c.history.unshift({date:today(),text});
+  saveClients(clients);showClient(currentClientId);
 }
 
 document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal()});
-render();
+renderDashboard();
 </script>
 </body>
 </html>
