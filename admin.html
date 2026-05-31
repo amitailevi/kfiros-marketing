@@ -255,9 +255,8 @@ tr:hover td{background:var(--blue-light)}
       <div class="form-group"><label>טלפון</label><input id="f-phone" type="tel"></div>
       <div class="form-group"><label>מייל</label><input id="f-email" type="email"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div class="form-group"><label>חבילה</label><select id="f-plan"><option value="BASIC">BASIC</option><option value="PRO">PRO</option><option value="ENTERPRISE">ENTERPRISE</option></select></div>
-      <div class="form-group"><label>ילדים</label><input id="f-kids" type="number" value="0"></div>
       <div class="form-group"><label>סטטוס</label><select id="f-status"><option value="lead">ליד</option><option value="trial">ניסיון</option><option value="active">פעיל</option><option value="churned">עזב</option></select></div>
     </div>
     <div class="form-group"><label>הערות</label><textarea id="f-notes" rows="2"></textarea></div>
@@ -435,7 +434,7 @@ function renderDashboard(){
   const clients=getClients();
   const active=clients.filter(c=>c.status==='active');
   const mrr=clients.filter(c=>c.status!=='churned').reduce((s,c)=>s+PLANS[c.plan],0);
-  const kids=clients.reduce((s,c)=>s+Number(c.kids||0),0);
+  const kids=getChildren().length;
   document.getElementById('kpis').innerHTML=`
     <div class="kpi"><div class="kpi-label">לקוחות</div><div class="kpi-value">${clients.length}</div><div class="kpi-sub">${active.length} פעילים</div></div>
     <div class="kpi"><div class="kpi-label">MRR</div><div class="kpi-value">₪${mrr.toLocaleString()}</div><div class="kpi-sub">הכנסה חודשית</div></div>
@@ -446,12 +445,13 @@ function renderDashboard(){
 
 function clientRow(c,mode){
   const s=STATUS_MAP[c.status];
+  const kidsCount=getChildren().filter(x=>x.org===c.org).length;
   if(mode==='short') return`<tr onclick="showClient(${c.id})" style="cursor:pointer">
     <td><div class="client-name">${c.name}</div><div class="client-org">${c.org}</div></td>
     <td><span class="badge ${PLAN_CLS[c.plan]}">${c.plan}</span></td>
     <td><span class="badge ${s.c}">${s.t}</span></td>
     <td style="font-weight:700">₪${PLANS[c.plan].toLocaleString()}</td>
-    <td>${Number(c.kids||0).toLocaleString()}</td>
+    <td>${kidsCount}</td>
     <td style="color:var(--muted)">${c.created}</td>
     <td><button class="btn-icon" onclick="event.stopPropagation();editClient(${c.id})">✏️</button></td></tr>`;
   return`<tr onclick="showClient(${c.id})" style="cursor:pointer">
@@ -460,7 +460,7 @@ function clientRow(c,mode){
     <td><span class="badge ${s.c}">${s.t}</span></td>
     <td style="color:var(--muted)">${c.phone||'-'}</td>
     <td style="color:var(--muted);font-size:.82rem">${c.email||'-'}</td>
-    <td>${Number(c.kids||0).toLocaleString()}</td>
+    <td>${kidsCount}</td>
     <td><button class="btn-icon" onclick="event.stopPropagation();editClient(${c.id})">✏️</button> <button class="btn-icon" onclick="event.stopPropagation();deleteClient(${c.id})">🗑️</button></td></tr>`;
 }
 
@@ -476,6 +476,7 @@ function showClient(id){
   const c=getClients().find(x=>x.id===id);if(!c)return;
   currentClientId=id;
   document.getElementById('detail-title').textContent=`${c.name} — ${c.org}`;
+  const allCh=getChildren(),orgCh=allCh.filter(x=>x.org===c.org),allP=getParents();
   document.getElementById('detail-content').innerHTML=`
     <div class="detail-card"><h3>פרטי קשר</h3>
       <div class="detail-row"><span>שם</span><strong>${c.name}</strong></div>
@@ -486,11 +487,10 @@ function showClient(id){
       <div class="detail-row"><span>חבילה</span><span class="badge ${PLAN_CLS[c.plan]}">${c.plan}</span></div>
       <div class="detail-row"><span>סטטוס</span><span class="badge ${STATUS_MAP[c.status].c}">${STATUS_MAP[c.status].t}</span></div>
       <div class="detail-row"><span>MRR</span><strong>₪${PLANS[c.plan].toLocaleString()}</strong></div>
-      <div class="detail-row"><span>ילדים</span><span>${Number(c.kids||0).toLocaleString()}</span></div>
+      <div class="detail-row"><span>ילדים</span><span>${orgCh.length}</span></div>
       <div class="detail-row"><span>תאריך התחלה</span><span>${c.created}</span></div></div>
     <div class="detail-card" style="grid-column:1/-1"><h3>הערות</h3><p style="color:var(--muted);font-size:.9rem;line-height:1.6">${c.notes||'אין הערות'}</p></div>`;
   document.getElementById('detail-timeline').innerHTML=`<div class="timeline">${(c.history||[]).map(h=>`<div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-date">${h.date}</div><div class="tl-text">${h.text}</div></div></div>`).join('')}</div>`;
-  const orgCh=getChildren().filter(x=>x.org===c.org),allP=getParents();
   document.getElementById('detail-children').innerHTML=orgCh.length?orgCh.map(ch=>{const p=allP.find(x=>x.id===ch.parentId);return`<tr><td style="font-weight:600">${ch.name}</td><td>${ch.age}</td><td><span class="badge badge-blue">${ch.group}</span></td><td style="color:var(--muted)">${p?p.name:'-'}</td></tr>`}).join(''):'<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">אין ילדים רשומים</td></tr>';
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-detail').classList.add('active');
@@ -588,7 +588,6 @@ function editClient(id){
   document.getElementById('f-phone').value=c.phone||'';
   document.getElementById('f-email').value=c.email||'';
   document.getElementById('f-plan').value=c.plan;
-  document.getElementById('f-kids').value=c.kids||0;
   document.getElementById('f-status').value=c.status;
   document.getElementById('f-notes').value=c.notes||'';
   document.getElementById('modal').classList.add('open');
@@ -598,7 +597,7 @@ function closeModal(){document.getElementById('modal').classList.remove('open')}
 function saveClient(e){
   e.preventDefault();
   const clients=getClients(),id=document.getElementById('f-id').value;
-  const data={name:document.getElementById('f-name').value,org:document.getElementById('f-org').value,phone:document.getElementById('f-phone').value,email:document.getElementById('f-email').value,plan:document.getElementById('f-plan').value,kids:parseInt(document.getElementById('f-kids').value)||0,status:document.getElementById('f-status').value,notes:document.getElementById('f-notes').value};
+  const data={name:document.getElementById('f-name').value,org:document.getElementById('f-org').value,phone:document.getElementById('f-phone').value,email:document.getElementById('f-email').value,plan:document.getElementById('f-plan').value,status:document.getElementById('f-status').value,notes:document.getElementById('f-notes').value};
   if(id){const idx=clients.findIndex(c=>c.id==id);if(idx>=0){clients[idx]={...clients[idx],...data};clients[idx].history.push({date:today(),text:'עודכנו פרטי לקוח'})}}
   else{data.id=Date.now();data.created=today();data.history=[{date:data.created,text:'לקוח נוסף למערכת'}];clients.push(data)}
   saveClients(clients);closeModal();renderDashboard();renderClients();
@@ -639,6 +638,7 @@ function openAddChild(){
   document.getElementById('child-modal').classList.add('open');
 }
 function populateParentSelect(org){
+  org=org||document.getElementById('fc-org').value;
   const p=getParents();const f=org?p.filter(x=>x.org===org):p;
   document.getElementById('fc-parent').innerHTML=f.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');
 }
