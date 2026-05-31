@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KfirOS - מערכת ההפעלה לעולם החינוך</title>
+<meta name="description" content="פלטפורמת SaaS לניהול מוסדות חינוך - הרשמה, סליקה, דשבורד, דיווח, AI">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#1565C0;--blue-dark:#0D47A1;--blue-light:#E3F2FD;--green:#2E7D32;--green-light:#E8F5E9;--orange:#E65100;--orange-light:#FFF3E0;--gray:#616161;--gray-light:#F5F5F5;--gold:#F9A825;--radius:16px}
+body{font-family:'Heebo',sans-serif;color:#212121;line-height:1.7;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+/* NAV */
+nav{position:fixed;top:0;right:0;left:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-bottom:1px solid #e0e0e0;transition:box-shadow .3s}
+nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.1)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-size:1.6rem;font-weight:900;color:var(--blue-dark)}
+.logo span{color:var(--gold)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{font-weight:500;font-size:.95rem;color:var(--gray);transition:color .2s}
+.nav-links a:hover{color:var(--blue)}
+.nav-cta{background:var(--blue);color:#fff!important;padding:8px 24px;border-radius:50px;font-weight:700;transition:transform .2s,box-shadow .2s}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(21,101,192,.4)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
+.hamburger span{width:24px;height:2px;background:#212121;transition:.3s}
+
+/* HERO */
+.hero{padding:140px 0 80px;background:linear-gradient(135deg,var(--blue-dark) 0%,var(--blue) 50%,#1976D2 100%);color:#fff;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:80px;background:white;clip-path:ellipse(55% 100% at 50% 100%)}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.hero h1{font-size:3rem;font-weight:900;line-height:1.3;margin-bottom:16px}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p{font-size:1.2rem;opacity:.9;margin-bottom:32px;max-width:500px}
+.hero-buttons{display:flex;gap:16px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:50px;font-weight:700;font-size:1rem;transition:transform .2s,box-shadow .2s;cursor:pointer;border:none;font-family:inherit}
+.btn:hover{transform:translateY(-2px)}
+.btn-gold{background:var(--gold);color:#212121;box-shadow:0 4px 15px rgba(249,168,37,.4)}
+.btn-white{background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.3)}
+.btn-white:hover{background:rgba(255,255,255,.25)}
+.btn-blue{background:var(--blue);color:#fff;box-shadow:0 4px 15px rgba(21,101,192,.3)}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;text-align:center}
+.stat{background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border-radius:var(--radius);padding:28px 16px;border:1px solid rgba(255,255,255,.15)}
+.stat-num{font-size:2.5rem;font-weight:900;color:var(--gold);display:block}
+.stat-label{font-size:.9rem;opacity:.85;margin-top:4px}
+
+/* SECTIONS */
+section{padding:80px 0}
+.section-title{text-align:center;margin-bottom:60px}
+.section-title h2{font-size:2.2rem;font-weight:900;color:var(--blue-dark);margin-bottom:12px}
+.section-title p{font-size:1.1rem;color:var(--gray);max-width:600px;margin:0 auto}
+.section-tag{display:inline-block;background:var(--blue-light);color:var(--blue);padding:6px 20px;border-radius:50px;font-weight:700;font-size:.85rem;margin-bottom:16px}
+
+/* PROBLEM */
+.problem{background:var(--gray-light)}
+.problem-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.problem-card{background:#fff;border-radius:var(--radius);padding:32px;border-right:4px solid #ef5350;transition:transform .2s}
+.problem-card:hover{transform:translateY(-4px)}
+.problem-card h3{color:#c62828;font-size:1.1rem;margin-bottom:8px}
+.problem-card p{color:var(--gray);font-size:.95rem}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.feature{background:#fff;border-radius:var(--radius);padding:28px;border:1px solid #e0e0e0;transition:transform .2s,box-shadow .2s;display:flex;gap:16px;align-items:flex-start}
+.feature:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,.08)}
+.feature-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.feature h3{font-size:1.05rem;margin-bottom:4px;color:#212121}
+.feature p{font-size:.9rem;color:var(--gray)}
+.fi-blue{background:var(--blue-light)}
+.fi-green{background:var(--green-light)}
+.fi-orange{background:var(--orange-light)}
+
+/* PROOF */
+.proof{background:linear-gradient(135deg,var(--green) 0%,#388E3C 100%);color:#fff}
+.proof .section-title h2,.proof .section-title p{color:#fff}
+.proof .section-tag{background:rgba(255,255,255,.2);color:#fff}
+.proof-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+.proof-card{background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border-radius:var(--radius);padding:32px 16px;border:1px solid rgba(255,255,255,.2)}
+.proof-num{font-size:2.8rem;font-weight:900;display:block}
+.proof-label{font-size:.95rem;opacity:.9;margin-top:8px}
+.proof-badge{display:inline-block;margin-top:40px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);padding:12px 32px;border-radius:50px;font-weight:700;font-size:1.1rem}
+
+/* PRICING */
+.pricing{background:var(--gray-light)}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start}
+.price-card{background:#fff;border-radius:var(--radius);overflow:hidden;border:2px solid #e0e0e0;transition:transform .3s,box-shadow .3s}
+.price-card:hover{transform:translateY(-8px);box-shadow:0 12px 40px rgba(0,0,0,.1)}
+.price-card.popular{border-color:var(--blue);transform:scale(1.04)}
+.price-card.popular:hover{transform:scale(1.04) translateY(-8px)}
+.price-header{padding:32px 24px;text-align:center;color:#fff}
+.price-card:nth-child(1) .price-header{background:var(--green)}
+.price-card:nth-child(2) .price-header{background:var(--blue)}
+.price-card:nth-child(3) .price-header{background:var(--orange)}
+.price-name{font-size:1.4rem;font-weight:900;margin-bottom:4px}
+.price-target{font-size:.9rem;opacity:.85}
+.price-amount{padding:24px;text-align:center;border-bottom:1px solid #eee}
+.price-num{font-size:2.6rem;font-weight:900;color:var(--blue-dark)}
+.price-period{font-size:.9rem;color:var(--gray)}
+.price-features{padding:24px;list-style:none}
+.price-features li{padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:.95rem;display:flex;gap:8px;align-items:center}
+.price-features li::before{content:'✓';color:var(--green);font-weight:700}
+.price-cta{padding:0 24px 24px;text-align:center}
+.price-cta .btn{width:100%;justify-content:center}
+
+/* FORECAST */
+.forecast-table{width:100%;border-collapse:collapse;border-radius:var(--radius);overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.forecast-table th{background:var(--blue-dark);color:#fff;padding:16px;font-weight:700;text-align:center}
+.forecast-table td{padding:14px 16px;text-align:center;border-bottom:1px solid #eee;font-size:1rem}
+.forecast-table tr:nth-child(even){background:var(--gray-light)}
+.forecast-table tr:last-child td{border-bottom:none}
+.forecast-table .highlight{background:var(--orange-light);font-weight:700}
+.exit-badge{text-align:center;margin-top:32px;padding:20px;background:linear-gradient(135deg,var(--orange-light),#FFE0B2);border-radius:var(--radius);border:2px solid var(--orange)}
+.exit-badge span{font-size:1.3rem;font-weight:900;color:var(--orange)}
+
+/* ROADMAP */
+.roadmap{background:var(--gray-light)}
+.timeline{position:relative;max-width:700px;margin:0 auto}
+.timeline::before{content:'';position:absolute;right:24px;top:0;bottom:0;width:3px;background:var(--blue-light)}
+.tl-item{position:relative;padding:0 60px 40px 0}
+.tl-dot{position:absolute;right:16px;top:4px;width:20px;height:20px;border-radius:50%;border:3px solid var(--blue);background:#fff;z-index:1}
+.tl-date{display:inline-block;background:var(--blue);color:#fff;padding:4px 16px;border-radius:50px;font-weight:700;font-size:.85rem;margin-bottom:8px}
+.tl-item h3{font-size:1.1rem;margin-bottom:6px;color:#212121}
+.tl-item p{color:var(--gray);font-size:.95rem}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.about-name{font-size:1.8rem;font-weight:900;color:var(--blue-dark);margin-bottom:8px}
+.about-role{color:var(--blue);font-weight:700;margin-bottom:16px}
+.about p{color:var(--gray);margin-bottom:12px;font-size:1.05rem}
+.about-badges{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.about-badge{background:var(--blue-light);color:var(--blue-dark);padding:8px 20px;border-radius:50px;font-weight:700;font-size:.85rem}
+.about-avatar{width:100%;aspect-ratio:1;background:linear-gradient(135deg,var(--blue-light),var(--green-light));border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:6rem}
+
+/* CTA */
+.cta{background:linear-gradient(135deg,var(--blue-dark),var(--blue));color:#fff;text-align:center;padding:100px 0}
+.cta h2{font-size:2.5rem;font-weight:900;margin-bottom:16px}
+.cta p{font-size:1.2rem;opacity:.9;margin-bottom:12px}
+.cta-offer{display:inline-block;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);padding:16px 40px;border-radius:var(--radius);margin:24px 0 32px;font-size:1.4rem;font-weight:900;color:var(--gold)}
+.cta-contact{margin-top:40px;font-size:1.1rem;opacity:.85}
+.cta-contact a{color:var(--gold);font-weight:700}
+
+/* FOOTER */
+footer{background:#0a0a0a;color:rgba(255,255,255,.6);text-align:center;padding:32px 0;font-size:.9rem}
+footer a{color:var(--gold)}
+
+/* MOBILE */
+@media(max-width:768px){
+  .nav-links{display:none;position:fixed;top:64px;right:0;left:0;background:#fff;flex-direction:column;padding:24px;gap:16px;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+  .nav-links.open{display:flex}
+  .hamburger{display:flex}
+  .hero{padding:100px 0 60px}
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .hero h1{font-size:2rem}
+  .hero-stats{grid-template-columns:repeat(3,1fr);gap:12px}
+  .stat{padding:16px 8px}
+  .stat-num{font-size:1.6rem}
+  .problem-grid,.features-grid{grid-template-columns:1fr}
+  .proof-grid{grid-template-columns:repeat(2,1fr)}
+  .pricing-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto}
+  .price-card.popular{transform:none}
+  .about-grid{grid-template-columns:1fr}
+  .about-avatar{max-width:200px;margin:0 auto}
+  .cta h2{font-size:1.8rem}
+  .section-title h2{font-size:1.8rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+<div class="container nav-inner">
+  <a href="#" class="logo">Kfir<span>OS</span></a>
+  <div class="nav-links" id="navLinks">
+    <a href="#problem">הבעיה</a>
+    <a href="#features">המוצר</a>
+    <a href="#proof">הוכחות</a>
+    <a href="#pricing">מחירים</a>
+    <a href="#about">אודות</a>
+    <a href="#cta" class="nav-cta">בואו נדבר</a>
+  </div>
+  <div class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+<div class="container">
+  <div class="hero-grid">
+    <div>
+      <h1><em>מערכת ההפעלה</em><br>לעולם החינוך</h1>
+      <p>פלטפורמת SaaS אחת לניהול צהרונים, קייטנות וחוגים &mdash; הרשמה אוטומטית, סליקה, דשבורד ו-AI.</p>
+      <div class="hero-buttons">
+        <a href="#cta" class="btn btn-gold">לפגישת היכרות</a>
+        <a href="#features" class="btn btn-white">גלו את המוצר</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">181</span><span class="stat-label">הרשמות אוטומטיות</span></div>
+      <div class="stat"><span class="stat-num">113K</span><span class="stat-label">&#8362; גביית אשראי</span></div>
+      <div class="stat"><span class="stat-num">87%</span><span class="stat-label">התאמה אוטומטית</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+<div class="container">
+  <div class="section-title">
+    <span class="section-tag">למה KfirOS?</span>
+    <h2>העולם החינוכי תקוע ב-1995</h2>
+    <p>אלפי ארגוני חינוך מנהלים הכל ידנית &mdash; טפסים, אקסלים, וואטסאפ. הגיע הזמן לשינוי.</p>
+  </div>
+  <div class="problem-grid">
+    <div class="problem-card">
+      <h3>הרשמות ידניות</h3>
+      <p>טפסי נייר, וואטסאפ, אקסל. כל הורה מתקשר, כל רישום לוקח 15 דקות.</p>
+    </div>
+    <div class="problem-card">
+      <h3>גבייה בטלפון</h3>
+      <p>מעקב תשלומים ידני, המחאות, העברות. חודשים של פיגור בגבייה.</p>
+    </div>
+    <div class="problem-card">
+      <h3>אפס שקיפות</h3>
+      <p>המנהל לא יודע כמה ילדים רשומים, מי שילם, מה הסטטוס. הכל בראש.</p>
+    </div>
+    <div class="problem-card">
+      <h3>החלטות עיוורות</h3>
+      <p>בלי דאטה, בלי אנליטיקס. החלטות קריטיות מבוססות תחושת בטן.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+<div class="container">
+  <div class="section-title">
+    <span class="section-tag">המוצר</span>
+    <h2>10 יכולות מרכזיות</h2>
+    <p>הכל במקום אחד &mdash; מהרגע שההורה נרשם ועד הדו&quot;ח החודשי למנכ&quot;ל</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature"><div class="feature-icon fi-blue">&#128221;</div><div><h3>אתר הרשמה אוטומטי</h3><p>RTL, מותאם מובייל, ממותג בצבעי הארגון</p></div></div>
+    <div class="feature"><div class="feature-icon fi-green">&#128179;</div><div><h3>סליקת iCredit</h3><p>חיוב אשראי, הוראות קבע, התאמה אוטומטית</p></div></div>
+    <div class="feature"><div class="feature-icon fi-blue">&#128202;</div><div><h3>דשבורד משרד</h3><p>הרשמות, תשלומים, סטטוס &mdash; הכל במבט אחד</p></div></div>
+    <div class="feature"><div class="feature-icon fi-green">&#128106;</div><div><h3>אזור הורה אישי</h3><p>כניסה במייל/SMS, צפייה בילדים ותשלומים</p></div></div>
+    <div class="feature"><div class="feature-icon fi-blue">&#128188;</div><div><h3>דשבורד מנהל</h3><p>ניהול סניפים, עובדים, תקציב מכל מקום</p></div></div>
+    <div class="feature"><div class="feature-icon fi-orange">&#128241;</div><div><h3>דיווח מהשטח</h3><p>עובדים מדווחים נוכחות ואירועים מהטלפון</p></div></div>
+    <div class="feature"><div class="feature-icon fi-orange">&#129302;</div><div><h3>AI Analytics</h3><p>תחזיות, התראות חכמות, המלצות אוטומטיות</p></div></div>
+    <div class="feature"><div class="feature-icon fi-green">&#128279;</div><div><h3>אינטגרציה לניצנים</h3><p>חיבור ישיר למערכת משרד החינוך</p></div></div>
+    <div class="feature"><div class="feature-icon fi-blue">&#128203;</div><div><h3>ניהול עובדים ושעות</h3><p>משמרות, נוכחות, דיווח שכר</p></div></div>
+    <div class="feature"><div class="feature-icon fi-orange">&#127970;</div><div><h3>Multi-brand</h3><p>ניהול מספר מותגים וארגונים ממערכת אחת</p></div></div>
+  </div>
+</div>
+</section>
+
+<!-- PROOF -->
+<section class="proof" id="proof">
+<div class="container">
+  <div class="section-title">
+    <span class="section-tag">הוכחות</span>
+    <h2>לא רק מצגת &mdash; כבר עובד!</h2>
+    <p>kfir-p.co.il חי באוויר, משרת הורים וילדים אמיתיים עכשיו</p>
+  </div>
+  <div class="proof-grid">
+    <div class="proof-card"><span class="proof-num">181</span><span class="proof-label">הרשמות אוטומטיות</span></div>
+    <div class="proof-card"><span class="proof-num">&#8362;113K</span><span class="proof-label">גביית אשראי</span></div>
+    <div class="proof-card"><span class="proof-num">87%</span><span class="proof-label">התאמה אוטומטית</span></div>
+    <div class="proof-card"><span class="proof-num">24/7</span><span class="proof-label">זמינות מלאה</span></div>
+  </div>
+  <div style="text-align:center"><span class="proof-badge">&#10003; פרודקשן &mdash; לא דמו. לקוחות אמיתיים.</span></div>
+</div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+<div class="container">
+  <div class="section-title">
+    <span class="section-tag">מחירים</span>
+    <h2>חבילה לכל גודל</h2>
+    <p>מצהרון קטן ועד רשת ארצית &mdash; יש חבילה שמתאימה לכם</p>
+  </div>
+  <div class="pricing-grid">
+    <!-- BASIC -->
+    <div class="price-card">
+      <div class="price-header"><div class="price-name">BASIC</div><div class="price-target">עד 500 ילדים</div></div>
+      <div class="price-amount"><span class="price-num">&#8362;3,500</span><br><span class="price-period">לחודש</span></div>
+      <ul class="price-features">
+        <li>אתר הרשמה ממותג</li>
+        <li>סליקת אשראי iCredit</li>
+        <li>דשבורד משרד</li>
+        <li>אזור הורה אישי</li>
+        <li>תמיכה טכנית</li>
+      </ul>
+      <div class="price-cta"><a href="#cta" class="btn btn-blue">התחילו עכשיו</a></div>
+    </div>
+    <!-- PRO -->
+    <div class="price-card popular">
+      <div class="price-header"><div class="price-name">PRO &#11088;</div><div class="price-target">500&ndash;2,000 ילדים</div></div>
+      <div class="price-amount"><span class="price-num">&#8362;8,500</span><br><span class="price-period">לחודש</span></div>
+      <ul class="price-features">
+        <li>הכל ב-BASIC +</li>
+        <li>ניהול עובדים ושעות</li>
+        <li>דיווח מהשטח</li>
+        <li>אינטגרציה לניצנים</li>
+        <li>דשבורד מנהל מתקדם</li>
+      </ul>
+      <div class="price-cta"><a href="#cta" class="btn btn-gold">הכי פופולרי</a></div>
+    </div>
+    <!-- ENTERPRISE -->
+    <div class="price-card">
+      <div class="price-header"><div class="price-name">ENTERPRISE</div><div class="price-target">+2,000 ילדים</div></div>
+      <div class="price-amount"><span class="price-num">&#8362;22,000</span><br><span class="price-period">לחודש</span></div>
+      <ul class="price-features">
+        <li>הכל ב-PRO +</li>
+        <li>AI Analytics</li>
+        <li>Multi-brand</li>
+        <li>אפליקציה ייעודית</li>
+        <li>Account Manager אישי</li>
+      </ul>
+      <div class="price-cta"><a href="#cta" class="btn btn-blue">צרו קשר</a></div>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:32px;color:var(--gray)">כל החבילות כוללות: התקנה, הדרכה, 12 חודש מינימום</p>
+</div>
+</section>
+
+<!-- FORECAST -->
+<section id="forecast">
+<div class="container">
+  <div class="section-title">
+    <span class="section-tag">תחזית</span>
+    <h2>תחזית פיננסית &mdash; 5 שנים</h2>
+  </div>
+  <table class="forecast-table">
+    <thead><tr><th>שנה</th><th>לקוחות</th><th>הכנסות</th><th>רווח</th></tr></thead>
+    <tbody>
+      <tr><td>שנה 1</td><td>3</td><td>&#8362;408K</td><td>&#8362;10K</td></tr>
+      <tr><td>שנה 2</td><td>13</td><td>&#8362;1.6M</td><td>&#8362;700K</td></tr>
+      <tr><td>שנה 3</td><td>30</td><td>&#8362;4.5M</td><td>&#8362;2.5M</td></tr>
+      <tr><td>שנה 4</td><td>60</td><td>&#8362;10M</td><td>&#8362;6M</td></tr>
+      <tr class="highlight"><td>שנה 5</td><td>100+</td><td>&#8362;20M</td><td>&#8362;12M</td></tr>
+    </tbody>
+  </table>
+  <div class="exit-badge"><span>שנה 5: אקזיט פוטנציאלי &#8362;100M&ndash;200M</span></div>
+</div>
+</section>
+
+<!-- ROADMAP -->
+<section class="roadmap" id="roadmap">
+<div class="container">
+  <div class="section-title">
+    <span class="section-tag">מפת דרכים</span>
+    <h2>מהיום ועד 2027</h2>
+  </div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><span class="tl-date">Q3 2026</span><h3>BASIC חי</h3><p>אתר הרשמה ממותג, סליקת אשראי, דשבורד משרד ואזור הורה</p></div>
+    <div class="tl-item"><div class="tl-dot"></div><span class="tl-date">Q4 2026</span><h3>PRO מושק</h3><p>ניהול עובדים, דיווח מהשטח, אינטגרציה לניצנים</p></div>
+    <div class="tl-item"><div class="tl-dot"></div><span class="tl-date">Q1 2027</span><h3>ENTERPRISE</h3><p>AI Analytics, Multi-brand, דשבורד מנכ&quot;ל</p></div>
+    <div class="tl-item"><div class="tl-dot"></div><span class="tl-date">Q2 2027</span><h3>אפליקציה</h3><p>אפליקציה להורים, Push notifications, צ&rsquo;אט עם המשרד</p></div>
+    <div class="tl-item"><div class="tl-dot"></div><span class="tl-date">2027+</span><h3>בינלאומי</h3><p>תרגום לאנגלית/ערבית, דובאי, סין, שותפויות אסטרטגיות</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+<div class="container">
+  <div class="about-grid">
+    <div>
+      <span class="section-tag">אודות</span>
+      <div class="about-name">אמיתי לוי</div>
+      <div class="about-role">מנכ&quot;ל KfirOS | אמיתי לוי יזמות בע&quot;מ</div>
+      <p>23 שנות ניסיון בעולם החינוך &mdash; מהדרכה בשטח ועד ניהול רשתות עם אלפי ילדים.</p>
+      <p>בניתי את kfir-p.co.il מאפס &mdash; מערכת שמשרתת מאות משפחות אמיתיות, עם הרשמה אוטומטית, סליקה ודשבורד.</p>
+      <p>עכשיו אני אורז את הטכנולוגיה הזאת למוצר SaaS שכל ארגון חינוך יכול להשתמש בו.</p>
+      <div class="about-badges">
+        <span class="about-badge">23 שנות ניסיון</span>
+        <span class="about-badge">22+ ארגונים</span>
+        <span class="about-badge">1,500+ ילדים</span>
+      </div>
+    </div>
+    <div class="about-avatar">&#128104;&#8205;&#128188;</div>
+  </div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="cta">
+<div class="container">
+  <h2>הצטרפו כלקוחות מייסדים</h2>
+  <p>קבלו 3 חודשי ניסיון חינם + הטמעה אישית</p>
+  <div class="cta-offer">3 חודשים חינם &#127881;</div>
+  <br>
+  <a href="https://wa.me/972523898467?text=%D7%94%D7%99%D7%99%20%D7%90%D7%9E%D7%99%D7%AA%D7%99%2C%20%D7%90%D7%A0%D7%99%20%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%9F%20%D7%91-KfirOS" class="btn btn-gold">&#128172; שלחו הודעה בוואטסאפ</a>
+  <div class="cta-contact">
+    <p>&#128222; <a href="tel:0523898467">052-3898467</a></p>
+    <p>&#128231; <a href="mailto:officekfirz@gmail.com">officekfirz@gmail.com</a></p>
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 KfirOS &mdash; <a href="#">אמיתי לוי יזמות בע&quot;מ</a> | כל הזכויות שמורות</p>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50)});
+</script>
+</body>
+</html>
