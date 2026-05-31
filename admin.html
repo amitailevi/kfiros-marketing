@@ -142,6 +142,8 @@ tr:hover td{background:var(--blue-light)}
   <div class="sidebar-section">ראשי</div>
   <a href="#" class="active" data-page="dashboard">📊 לוח בקרה</a>
   <a href="#" data-page="clients">🏢 לקוחות</a>
+  <a href="#" data-page="children">👦 ילדים</a>
+  <a href="#" data-page="parents">👨‍👩‍👧 הורים</a>
   <div class="sidebar-section">ניהול</div>
   <a href="#" data-page="billing">💰 חיובים</a>
   <a href="#" data-page="onboarding">🚀 הטמעה</a>
@@ -179,6 +181,7 @@ tr:hover td{background:var(--blue-light)}
   <div class="topbar"><h1 id="detail-title"></h1>
   <div style="display:flex;gap:8px"><button class="btn btn-outline" onclick="navTo('clients')">← חזרה</button><button class="btn btn-blue" onclick="editCurrentClient()">עריכה</button></div></div>
   <div class="detail-grid" id="detail-content"></div>
+  <div class="card" style="margin-bottom:16px"><div class="card-header"><h2>ילדים בארגון</h2></div><table><thead><tr><th>שם</th><th>גיל</th><th>קבוצה</th><th>הורה</th></tr></thead><tbody id="detail-children"></tbody></table></div>
   <div class="card"><div class="card-header"><h2>היסטוריה</h2><button class="btn btn-sm btn-outline" onclick="addNote()">+ הערה</button></div><div id="detail-timeline"></div></div>
 </div>
 
@@ -213,6 +216,28 @@ tr:hover td{background:var(--blue-light)}
   </div>
 </div>
 
+<!-- CHILDREN -->
+<div class="page" id="page-children">
+  <div class="topbar"><h1>ילדים</h1><button class="btn btn-blue" onclick="openAddChild()">+ ילד חדש</button></div>
+  <div class="kpis" id="children-kpis"></div>
+  <div class="card">
+    <div class="card-header"><h2>כל הילדים</h2><div id="children-count" style="font-size:.85rem;color:var(--muted)"></div></div>
+    <table><thead><tr><th>שם</th><th>גיל</th><th>קבוצה</th><th>ארגון</th><th>הורה</th><th>טלפון</th><th></th></tr></thead>
+    <tbody id="children-table"></tbody></table>
+  </div>
+</div>
+
+<!-- PARENTS -->
+<div class="page" id="page-parents">
+  <div class="topbar"><h1>הורים</h1><button class="btn btn-blue" onclick="openAddParent()">+ הורה חדש</button></div>
+  <div class="kpis" id="parents-kpis"></div>
+  <div class="card">
+    <div class="card-header"><h2>כל ההורים</h2><div id="parents-count" style="font-size:.85rem;color:var(--muted)"></div></div>
+    <table><thead><tr><th>שם</th><th>טלפון</th><th>מייל</th><th>ארגון</th><th>ילדים</th><th></th></tr></thead>
+    <tbody id="parents-table"></tbody></table>
+  </div>
+</div>
+
 </div>
 </div>
 
@@ -241,6 +266,46 @@ tr:hover td{background:var(--blue-light)}
 </div>
 </div>
 
+<!-- CHILD MODAL -->
+<div class="modal-overlay" id="child-modal">
+<div class="modal">
+  <h2 id="child-modal-title">ילד חדש</h2>
+  <form id="child-form" onsubmit="saveChild(event)">
+    <input type="hidden" id="fc-id">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label>שם</label><input id="fc-name" required></div>
+      <div class="form-group"><label>גיל</label><input id="fc-age" type="number" min="1" max="18" required></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label>קבוצה</label><select id="fc-group"><option>חמניות</option><option>כלניות</option><option>רקפות</option><option>חרציות</option><option>נרקיסים</option></select></div>
+      <div class="form-group"><label>ארגון</label><select id="fc-org"></select></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label>הורה</label><select id="fc-parent"></select></div>
+      <div class="form-group"><label>סטטוס</label><select id="fc-status"><option value="active">פעיל</option><option value="inactive">לא פעיל</option></select></div>
+    </div>
+    <div class="form-actions"><button type="submit" class="btn btn-blue" style="flex:1">שמור</button><button type="button" class="btn btn-outline" onclick="closeChildModal()">ביטול</button></div>
+  </form>
+</div>
+</div>
+
+<!-- PARENT MODAL -->
+<div class="modal-overlay" id="parent-modal">
+<div class="modal">
+  <h2 id="parent-modal-title">הורה חדש</h2>
+  <form id="parent-form" onsubmit="saveParentForm(event)">
+    <input type="hidden" id="fp-id">
+    <div class="form-group"><label>שם</label><input id="fp-name" required></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label>טלפון</label><input id="fp-phone" type="tel" required></div>
+      <div class="form-group"><label>מייל</label><input id="fp-email" type="email"></div>
+    </div>
+    <div class="form-group"><label>ארגון</label><select id="fp-org"></select></div>
+    <div class="form-actions"><button type="submit" class="btn btn-blue" style="flex:1">שמור</button><button type="button" class="btn btn-outline" onclick="closeParentModal()">ביטול</button></div>
+  </form>
+</div>
+</div>
+
 <script>
 const PLANS={BASIC:3500,PRO:8500,ENTERPRISE:22000};
 const STATUS_MAP={lead:{t:'ליד',c:'badge-gray'},trial:{t:'ניסיון',c:'badge-orange'},active:{t:'פעיל',c:'badge-green'},churned:{t:'עזב',c:'badge-red'}};
@@ -253,6 +318,10 @@ function getTickets(){return JSON.parse(localStorage.getItem('kfiros_tickets')||
 function saveTickets(t){localStorage.setItem('kfiros_tickets',JSON.stringify(t))}
 function getSteps(){return JSON.parse(localStorage.getItem('kfiros_steps')||'[]')}
 function saveSteps(s){localStorage.setItem('kfiros_steps',JSON.stringify(s))}
+function getChildren(){return JSON.parse(localStorage.getItem('kfiros_children')||'[]')}
+function saveChildren(c){localStorage.setItem('kfiros_children',JSON.stringify(c))}
+function getParents(){return JSON.parse(localStorage.getItem('kfiros_parents')||'[]')}
+function saveParents(p){localStorage.setItem('kfiros_parents',JSON.stringify(p))}
 
 // SEED
 if(!localStorage.getItem('kfiros_clients')){
@@ -281,6 +350,63 @@ if(!localStorage.getItem('kfiros_steps')){
   ];
   saveSteps([...makeSteps('המשכיל'),...makeSteps('תנופה הפקות'),...makeSteps('אופק')]);
 }
+if(!localStorage.getItem('kfiros_children')){
+  saveChildren([
+    {id:101,name:'יובל כהן',age:6,group:'חמניות',org:'המשכיל',parentId:201,status:'active'},
+    {id:102,name:'נועה כהן',age:8,group:'כלניות',org:'המשכיל',parentId:201,status:'active'},
+    {id:103,name:'איתמר לוי',age:5,group:'רקפות',org:'המשכיל',parentId:202,status:'active'},
+    {id:104,name:'שירה ישראלי',age:7,group:'חמניות',org:'המשכיל',parentId:203,status:'active'},
+    {id:105,name:'עידו ישראלי',age:4,group:'נרקיסים',org:'המשכיל',parentId:203,status:'active'},
+    {id:106,name:'תמר מזרחי',age:9,group:'כלניות',org:'המשכיל',parentId:204,status:'active'},
+    {id:107,name:'רועי אברהם',age:6,group:'חמניות',org:'המשכיל',parentId:205,status:'active'},
+    {id:108,name:'מאיה פרץ',age:5,group:'רקפות',org:'המשכיל',parentId:206,status:'active'},
+    {id:109,name:'דניאל פרץ',age:8,group:'כלניות',org:'המשכיל',parentId:206,status:'active'},
+    {id:110,name:'אורי ביטון',age:7,group:'חמניות',org:'המשכיל',parentId:207,status:'active'},
+    {id:111,name:'ליאם גולן',age:6,group:'חרציות',org:'המשכיל',parentId:208,status:'active'},
+    {id:112,name:'אגם דהן',age:5,group:'רקפות',org:'המשכיל',parentId:209,status:'active'},
+    {id:113,name:'נועם דהן',age:10,group:'כלניות',org:'המשכיל',parentId:209,status:'active'},
+    {id:114,name:'רוני אוחיון',age:4,group:'נרקיסים',org:'המשכיל',parentId:210,status:'active'},
+    {id:115,name:'עומר אוחיון',age:7,group:'חמניות',org:'המשכיל',parentId:210,status:'active'},
+    {id:116,name:'גיא שמש',age:6,group:'חמניות',org:'תנופה הפקות',parentId:211,status:'active'},
+    {id:117,name:'תום שמש',age:4,group:'נרקיסים',org:'תנופה הפקות',parentId:211,status:'active'},
+    {id:118,name:'שקד בר',age:7,group:'חמניות',org:'תנופה הפקות',parentId:212,status:'active'},
+    {id:119,name:'יעל גלעד',age:5,group:'רקפות',org:'תנופה הפקות',parentId:213,status:'active'},
+    {id:120,name:'אדם גלעד',age:8,group:'כלניות',org:'תנופה הפקות',parentId:213,status:'active'},
+    {id:121,name:'ניר גלעד',age:3,group:'נרקיסים',org:'תנופה הפקות',parentId:213,status:'active'},
+    {id:122,name:'אריאל רוזן',age:6,group:'חמניות',org:'אופק',parentId:214,status:'active'},
+    {id:123,name:'הילה רוזן',age:9,group:'כלניות',org:'אופק',parentId:214,status:'active'},
+    {id:124,name:'עדי חן',age:5,group:'רקפות',org:'אופק',parentId:215,status:'active'},
+    {id:125,name:'דנה חן',age:7,group:'חמניות',org:'אופק',parentId:215,status:'active'},
+    {id:126,name:'ליה שלום',age:4,group:'נרקיסים',org:'אופק',parentId:216,status:'active'},
+    {id:127,name:'אביגיל שלום',age:8,group:'כלניות',org:'אופק',parentId:216,status:'active'},
+    {id:128,name:'עמית עוז',age:6,group:'חרציות',org:'אופק',parentId:217,status:'active'},
+    {id:129,name:'יונתן עוז',age:10,group:'כלניות',org:'אופק',parentId:217,status:'active'},
+    {id:130,name:'רון שפירא',age:5,group:'רקפות',org:'אופק',parentId:218,status:'active'},
+    {id:131,name:'נדב שפירא',age:7,group:'חמניות',org:'אופק',parentId:218,status:'active'},
+  ]);
+}
+if(!localStorage.getItem('kfiros_parents')){
+  saveParents([
+    {id:201,name:'רוני כהן',phone:'050-5551001',email:'roni.c@email.co.il',org:'המשכיל'},
+    {id:202,name:'מיכל לוי',phone:'052-5551002',email:'michal.l@email.co.il',org:'המשכיל'},
+    {id:203,name:'אבי ישראלי',phone:'054-5551003',email:'avi.i@email.co.il',org:'המשכיל'},
+    {id:204,name:'שרה מזרחי',phone:'050-5551004',email:'sara.m@email.co.il',org:'המשכיל'},
+    {id:205,name:'דן אברהם',phone:'053-5551005',email:'dan.a@email.co.il',org:'המשכיל'},
+    {id:206,name:'רינת פרץ',phone:'052-5551006',email:'rinat.p@email.co.il',org:'המשכיל'},
+    {id:207,name:'יוסי ביטון',phone:'050-5551007',email:'yosi.b@email.co.il',org:'המשכיל'},
+    {id:208,name:'ענת גולן',phone:'054-5551008',email:'anat.g@email.co.il',org:'המשכיל'},
+    {id:209,name:'משה דהן',phone:'050-5551009',email:'moshe.d@email.co.il',org:'המשכיל'},
+    {id:210,name:'רחל אוחיון',phone:'052-5551010',email:'rachel.o@email.co.il',org:'המשכיל'},
+    {id:211,name:'אילן שמש',phone:'050-5552001',email:'ilan.s@email.co.il',org:'תנופה הפקות'},
+    {id:212,name:'דנית בר',phone:'052-5552002',email:'danit.b@email.co.il',org:'תנופה הפקות'},
+    {id:213,name:'עומר גלעד',phone:'054-5552003',email:'omer.g@email.co.il',org:'תנופה הפקות'},
+    {id:214,name:'טלי רוזן',phone:'050-5553001',email:'tali.r@email.co.il',org:'אופק'},
+    {id:215,name:'אמיר חן',phone:'052-5553002',email:'amir.c@email.co.il',org:'אופק'},
+    {id:216,name:'ליאת שלום',phone:'054-5553003',email:'liat.s@email.co.il',org:'אופק'},
+    {id:217,name:'הדר עוז',phone:'050-5553004',email:'hadar.o@email.co.il',org:'אופק'},
+    {id:218,name:'נועם שפירא',phone:'052-5553005',email:'noam.s@email.co.il',org:'אופק'},
+  ]);
+}
 
 let currentClientId=null;
 
@@ -297,6 +423,8 @@ function navTo(page){
   if(el)el.classList.add('active');
   if(page==='dashboard')renderDashboard();
   if(page==='clients')renderClients();
+  if(page==='children')renderChildren();
+  if(page==='parents')renderParents();
   if(page==='billing')renderBilling();
   if(page==='onboarding')renderOnboarding();
   if(page==='support')renderSupport();
@@ -362,6 +490,8 @@ function showClient(id){
       <div class="detail-row"><span>תאריך התחלה</span><span>${c.created}</span></div></div>
     <div class="detail-card" style="grid-column:1/-1"><h3>הערות</h3><p style="color:var(--muted);font-size:.9rem;line-height:1.6">${c.notes||'אין הערות'}</p></div>`;
   document.getElementById('detail-timeline').innerHTML=`<div class="timeline">${(c.history||[]).map(h=>`<div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-date">${h.date}</div><div class="tl-text">${h.text}</div></div></div>`).join('')}</div>`;
+  const orgCh=getChildren().filter(x=>x.org===c.org),allP=getParents();
+  document.getElementById('detail-children').innerHTML=orgCh.length?orgCh.map(ch=>{const p=allP.find(x=>x.id===ch.parentId);return`<tr><td style="font-weight:600">${ch.name}</td><td>${ch.age}</td><td><span class="badge badge-blue">${ch.group}</span></td><td style="color:var(--muted)">${p?p.name:'-'}</td></tr>`}).join(''):'<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">אין ילדים רשומים</td></tr>';
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-detail').classList.add('active');
 }
@@ -483,6 +613,73 @@ function addNote(){
 }
 
 document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal()});
+document.getElementById('child-modal').addEventListener('click',e=>{if(e.target===document.getElementById('child-modal'))closeChildModal()});
+document.getElementById('parent-modal').addEventListener('click',e=>{if(e.target===document.getElementById('parent-modal'))closeParentModal()});
+document.getElementById('fc-org').addEventListener('change',e=>populateParentSelect(e.target.value));
+
+// CHILDREN
+function renderChildren(){
+  const children=getChildren(),parents=getParents();
+  const byOrg={};children.forEach(c=>{byOrg[c.org]=(byOrg[c.org]||0)+1});
+  const orgs=Object.keys(byOrg);
+  document.getElementById('children-kpis').innerHTML=`
+    <div class="kpi"><div class="kpi-label">סה"כ ילדים</div><div class="kpi-value">${children.length}</div></div>
+    ${orgs.slice(0,3).map(o=>`<div class="kpi"><div class="kpi-label">${o}</div><div class="kpi-value">${byOrg[o]}</div></div>`).join('')}`;
+  document.getElementById('children-count').textContent=`${children.length} ילדים`;
+  document.getElementById('children-table').innerHTML=children.map(c=>{
+    const p=parents.find(x=>x.id===c.parentId);
+    return`<tr><td style="font-weight:600">${c.name}</td><td>${c.age}</td><td><span class="badge badge-blue">${c.group}</span></td><td>${c.org}</td><td style="color:var(--muted)">${p?p.name:'-'}</td><td style="color:var(--muted)">${p?p.phone:'-'}</td><td><button class="btn-icon" onclick="deleteChild(${c.id})">🗑️</button></td></tr>`;
+  }).join('');
+}
+function openAddChild(){
+  document.getElementById('child-modal-title').textContent='ילד חדש';
+  document.getElementById('child-form').reset();document.getElementById('fc-id').value='';
+  document.getElementById('fc-org').innerHTML=[...new Set(getClients().map(c=>c.org))].map(o=>`<option>${o}</option>`).join('');
+  populateParentSelect();
+  document.getElementById('child-modal').classList.add('open');
+}
+function populateParentSelect(org){
+  const p=getParents();const f=org?p.filter(x=>x.org===org):p;
+  document.getElementById('fc-parent').innerHTML=f.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');
+}
+function saveChild(e){
+  e.preventDefault();const children=getChildren(),id=document.getElementById('fc-id').value;
+  const d={name:document.getElementById('fc-name').value,age:parseInt(document.getElementById('fc-age').value),group:document.getElementById('fc-group').value,org:document.getElementById('fc-org').value,parentId:parseInt(document.getElementById('fc-parent').value),status:document.getElementById('fc-status').value};
+  if(id){const i=children.findIndex(c=>c.id==id);if(i>=0)children[i]={...children[i],...d}}else{d.id=Date.now();children.push(d)}
+  saveChildren(children);closeChildModal();renderChildren();
+}
+function deleteChild(id){if(!confirm('למחוק ילד?'))return;saveChildren(getChildren().filter(c=>c.id!==id));renderChildren()}
+function closeChildModal(){document.getElementById('child-modal').classList.remove('open')}
+
+// PARENTS
+function renderParents(){
+  const parents=getParents(),children=getChildren();
+  document.getElementById('parents-kpis').innerHTML=`
+    <div class="kpi"><div class="kpi-label">סה"כ הורים</div><div class="kpi-value">${parents.length}</div></div>
+    <div class="kpi"><div class="kpi-label">סה"כ ילדים</div><div class="kpi-value">${children.length}</div></div>
+    <div class="kpi"><div class="kpi-label">ממוצע ילדים</div><div class="kpi-value">${parents.length?(children.length/parents.length).toFixed(1):0}</div></div>
+    <div class="kpi"><div class="kpi-label">ארגונים</div><div class="kpi-value">${new Set(parents.map(p=>p.org)).size}</div></div>`;
+  document.getElementById('parents-count').textContent=`${parents.length} הורים`;
+  document.getElementById('parents-table').innerHTML=parents.map(p=>{
+    const kids=children.filter(c=>c.parentId===p.id);
+    return`<tr><td style="font-weight:600">${p.name}</td><td style="color:var(--muted)">${p.phone}</td><td style="color:var(--muted);font-size:.82rem">${p.email||'-'}</td><td>${p.org}</td><td><span class="badge badge-blue">${kids.length} ילדים</span></td><td><button class="btn-icon" onclick="deleteParent(${p.id})">🗑️</button></td></tr>`;
+  }).join('');
+}
+function openAddParent(){
+  document.getElementById('parent-modal-title').textContent='הורה חדש';
+  document.getElementById('parent-form').reset();document.getElementById('fp-id').value='';
+  document.getElementById('fp-org').innerHTML=[...new Set(getClients().map(c=>c.org))].map(o=>`<option>${o}</option>`).join('');
+  document.getElementById('parent-modal').classList.add('open');
+}
+function saveParentForm(e){
+  e.preventDefault();const parents=getParents(),id=document.getElementById('fp-id').value;
+  const d={name:document.getElementById('fp-name').value,phone:document.getElementById('fp-phone').value,email:document.getElementById('fp-email').value,org:document.getElementById('fp-org').value};
+  if(id){const i=parents.findIndex(p=>p.id==id);if(i>=0)parents[i]={...parents[i],...d}}else{d.id=Date.now();parents.push(d)}
+  saveParents(parents);closeParentModal();renderParents();
+}
+function deleteParent(id){if(!confirm('למחוק הורה?'))return;saveParents(getParents().filter(p=>p.id!==id));renderParents()}
+function closeParentModal(){document.getElementById('parent-modal').classList.remove('open')}
+
 renderDashboard();
 </script>
 </body>
