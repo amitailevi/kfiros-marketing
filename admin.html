@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KfirOS Admin - ניהול לקוחות</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f1117;--card:#1a1d27;--border:#2a2d3a;--blue:#4C8BF5;--green:#34D399;--orange:#F59E0B;--red:#EF4444;--text:#E5E7EB;--muted:#9CA3AF;--radius:12px}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.sidebar{background:var(--card);border-left:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;gap:8px}
+.sidebar-logo{font-size:1.4rem;font-weight:900;padding:8px 12px;margin-bottom:16px;color:#fff}
+.sidebar-logo span{color:var(--orange)}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:var(--muted);font-weight:500;text-decoration:none;transition:.2s}
+.sidebar a:hover,.sidebar a.active{background:rgba(76,139,245,.15);color:var(--blue)}
+.main{padding:32px;overflow-y:auto}
+
+/* TOP BAR */
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+.topbar h1{font-size:1.6rem;font-weight:700}
+.topbar-actions{display:flex;gap:12px}
+.btn{padding:10px 20px;border-radius:8px;border:none;font-family:inherit;font-weight:700;cursor:pointer;font-size:.9rem;transition:.2s}
+.btn:hover{transform:translateY(-1px)}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-green{background:var(--green);color:#000}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-sm{padding:6px 14px;font-size:.8rem}
+.btn-red{background:var(--red);color:#fff}
+
+/* KPI CARDS */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.kpi-label{font-size:.85rem;color:var(--muted);margin-bottom:8px}
+.kpi-value{font-size:2rem;font-weight:900}
+.kpi-sub{font-size:.8rem;color:var(--green);margin-top:4px}
+
+/* TABLE */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.table-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
+.table-header h2{font-size:1.1rem;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th{text-align:right;padding:12px 20px;font-size:.8rem;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.5px}
+td{padding:14px 20px;border-bottom:1px solid var(--border);font-size:.95rem}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.badge{display:inline-block;padding:4px 12px;border-radius:50px;font-size:.75rem;font-weight:700}
+.badge-green{background:rgba(52,211,153,.15);color:var(--green)}
+.badge-orange{background:rgba(245,158,11,.15);color:var(--orange)}
+.badge-blue{background:rgba(76,139,245,.15);color:var(--blue)}
+.badge-red{background:rgba(239,68,68,.15);color:var(--red)}
+.badge-gray{background:rgba(156,163,175,.15);color:var(--muted)}
+.client-name{font-weight:700;color:#fff}
+.client-org{font-size:.85rem;color:var(--muted)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal h2{margin-bottom:20px;font-size:1.3rem}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;margin-bottom:6px;font-size:.85rem;color:var(--muted);font-weight:500}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;font-size:.95rem}
+.form-group select{appearance:none}
+.form-group textarea{min-height:80px;resize:vertical}
+.form-actions{display:flex;gap:12px;margin-top:24px}
+
+/* TIMELINE */
+.timeline{padding:20px}
+.tl-item{display:flex;gap:12px;padding-bottom:16px;position:relative}
+.tl-item::before{content:'';position:absolute;right:7px;top:20px;bottom:0;width:2px;background:var(--border)}
+.tl-item:last-child::before{display:none}
+.tl-dot{width:16px;height:16px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px}
+.tl-content{flex:1}
+.tl-date{font-size:.75rem;color:var(--muted)}
+.tl-text{font-size:.9rem;margin-top:2px}
+
+/* DETAIL */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+.detail-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.detail-card h3{font-size:1rem;margin-bottom:12px;color:var(--muted)}
+.detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.9rem}
+.detail-row:last-child{border-bottom:none}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .detail-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Kfir<span>OS</span> Admin</div>
+    <a href="#" class="active" onclick="showPage('dashboard')">📊 לוח בקרה</a>
+    <a href="#" onclick="showPage('clients')">🏢 לקוחות</a>
+    <a href="#" onclick="showPage('billing')">💰 חיובים</a>
+    <a href="#" onclick="showPage('onboarding')">🚀 הטמעה</a>
+    <a href="#" onclick="showPage('support')">🎧 תמיכה</a>
+    <div style="flex:1"></div>
+    <a href="index.html">🌐 אתר שיווק</a>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- DASHBOARD PAGE -->
+    <div id="page-dashboard">
+      <div class="topbar">
+        <h1>לוח בקרה</h1>
+        <div class="topbar-actions">
+          <button class="btn btn-blue" onclick="openAddClient()">+ לקוח חדש</button>
+        </div>
+      </div>
+
+      <div class="kpis" id="kpis"></div>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <h2>לקוחות פעילים</h2>
+        </div>
+        <table>
+          <thead><tr><th>לקוח</th><th>חבילה</th><th>סטטוס</th><th>MRR</th><th>ילדים</th><th>התחלה</th><th>פעולות</th></tr></thead>
+          <tbody id="clients-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CLIENT DETAIL PAGE -->
+    <div id="page-detail" style="display:none">
+      <div class="topbar">
+        <h1 id="detail-title"></h1>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" onclick="showPage('dashboard')">← חזרה</button>
+          <button class="btn btn-blue" onclick="editCurrentClient()">עריכה</button>
+        </div>
+      </div>
+      <div class="detail-grid" id="detail-content"></div>
+      <div class="table-wrap">
+        <div class="table-header"><h2>היסטוריה</h2><button class="btn btn-sm btn-ghost" onclick="addNote()">+ הערה</button></div>
+        <div id="detail-timeline"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD/EDIT CLIENT MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2 id="modal-title">לקוח חדש</h2>
+    <form id="client-form" onsubmit="saveClient(event)">
+      <input type="hidden" id="f-id">
+      <div class="form-group"><label>שם איש קשר</label><input id="f-name" required></div>
+      <div class="form-group"><label>ארגון</label><input id="f-org" required></div>
+      <div class="form-group"><label>טלפון</label><input id="f-phone" type="tel"></div>
+      <div class="form-group"><label>מייל</label><input id="f-email" type="email"></div>
+      <div class="form-group"><label>חבילה</label>
+        <select id="f-plan">
+          <option value="BASIC">BASIC - ₪3,500</option>
+          <option value="PRO">PRO - ₪8,500</option>
+          <option value="ENTERPRISE">ENTERPRISE - ₪22,000</option>
+        </select>
+      </div>
+      <div class="form-group"><label>מספר ילדים</label><input id="f-kids" type="number" value="0"></div>
+      <div class="form-group"><label>סטטוס</label>
+        <select id="f-status">
+          <option value="lead">ליד</option>
+          <option value="trial">ניסיון</option>
+          <option value="active">פעיל</option>
+          <option value="churned">עזב</option>
+        </select>
+      </div>
+      <div class="form-group"><label>הערות</label><textarea id="f-notes"></textarea></div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-green">שמור</button>
+        <button type="button" class="btn btn-ghost" onclick="closeModal()">ביטול</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const PLANS = {BASIC:3500, PRO:8500, ENTERPRISE:22000};
+const STATUS_MAP = {lead:{text:'ליד',cls:'badge-gray'},trial:{text:'ניסיון',cls:'badge-orange'},active:{text:'פעיל',cls:'badge-green'},churned:{text:'עזב',cls:'badge-red'}};
+const PLAN_CLS = {BASIC:'badge-green',PRO:'badge-blue',ENTERPRISE:'badge-orange'};
+
+function getClients(){ return JSON.parse(localStorage.getItem('kfiros_clients')||'[]') }
+function saveClients(c){ localStorage.setItem('kfiros_clients',JSON.stringify(c)) }
+
+// Seed data
+if(!localStorage.getItem('kfiros_clients')){
+  saveClients([
+    {id:1,name:'שי כהן',org:'המשכיל',phone:'050-1234567',email:'shai@hamaskil.co.il',plan:'ENTERPRISE',kids:5000,status:'lead',notes:'5,000 ילדים, רשת ארצית',created:'2026-06-01',history:[{date:'2026-06-01',text:'פגישת היכרות ראשונה'}]},
+    {id:2,name:'דוד גוילי',org:'תנופה הפקות',phone:'052-7654321',email:'david@tnufa.co.il',plan:'BASIC',kids:200,status:'lead',notes:'צהרון קטן, מעוניין להתחיל מהר',created:'2026-06-01',history:[{date:'2026-06-01',text:'פגישת היכרות ראשונה'}]},
+    {id:3,name:'אילנה כוכבי',org:'אופק',phone:'054-9876543',email:'ilana@ofek.org.il',plan:'PRO',kids:800,status:'lead',notes:'800 ילדים, צריכה ניצנים',created:'2026-06-01',history:[{date:'2026-06-01',text:'פגישת היכרות ראשונה'}]},
+  ]);
+}
+
+let currentClientId = null;
+
+function render(){
+  const clients = getClients();
+  const active = clients.filter(c=>c.status==='active');
+  const mrr = clients.filter(c=>c.status!=='churned').reduce((s,c)=>s+PLANS[c.plan],0);
+  const totalKids = clients.reduce((s,c)=>s+Number(c.kids||0),0);
+
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi"><div class="kpi-label">לקוחות</div><div class="kpi-value">${clients.length}</div><div class="kpi-sub">${active.length} פעילים</div></div>
+    <div class="kpi"><div class="kpi-label">MRR</div><div class="kpi-value">₪${mrr.toLocaleString()}</div><div class="kpi-sub">הכנסה חודשית חוזרת</div></div>
+    <div class="kpi"><div class="kpi-label">ARR</div><div class="kpi-value">₪${(mrr*12).toLocaleString()}</div><div class="kpi-sub">הכנסה שנתית</div></div>
+    <div class="kpi"><div class="kpi-label">ילדים</div><div class="kpi-value">${totalKids.toLocaleString()}</div><div class="kpi-sub">סה"כ במערכת</div></div>
+  `;
+
+  document.getElementById('clients-table').innerHTML = clients.map(c=>`
+    <tr onclick="showClient(${c.id})" style="cursor:pointer">
+      <td><div class="client-name">${c.name}</div><div class="client-org">${c.org}</div></td>
+      <td><span class="badge ${PLAN_CLS[c.plan]}">${c.plan}</span></td>
+      <td><span class="badge ${STATUS_MAP[c.status].cls}">${STATUS_MAP[c.status].text}</span></td>
+      <td>₪${PLANS[c.plan].toLocaleString()}</td>
+      <td>${Number(c.kids||0).toLocaleString()}</td>
+      <td>${c.created}</td>
+      <td><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();editClient(${c.id})">✏️</button> <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();deleteClient(${c.id})">🗑️</button></td>
+    </tr>
+  `).join('');
+}
+
+function showPage(page){
+  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+  event?.target?.classList?.add('active');
+  document.getElementById('page-dashboard').style.display = page==='dashboard'?'block':'none';
+  document.getElementById('page-detail').style.display = page==='detail'?'block':'none';
+  if(page==='dashboard') render();
+}
+
+function showClient(id){
+  const c = getClients().find(x=>x.id===id);
+  if(!c) return;
+  currentClientId = id;
+  document.getElementById('detail-title').textContent = `${c.name} — ${c.org}`;
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-card"><h3>פרטי לקוח</h3>
+      <div class="detail-row"><span>שם</span><span>${c.name}</span></div>
+      <div class="detail-row"><span>ארגון</span><span>${c.org}</span></div>
+      <div class="detail-row"><span>טלפון</span><span><a href="tel:${c.phone}" style="color:var(--blue)">${c.phone}</a></span></div>
+      <div class="detail-row"><span>מייל</span><span><a href="mailto:${c.email}" style="color:var(--blue)">${c.email}</a></span></div>
+    </div>
+    <div class="detail-card"><h3>מנוי</h3>
+      <div class="detail-row"><span>חבילה</span><span class="badge ${PLAN_CLS[c.plan]}">${c.plan}</span></div>
+      <div class="detail-row"><span>סטטוס</span><span class="badge ${STATUS_MAP[c.status].cls}">${STATUS_MAP[c.status].text}</span></div>
+      <div class="detail-row"><span>MRR</span><span>₪${PLANS[c.plan].toLocaleString()}</span></div>
+      <div class="detail-row"><span>ילדים</span><span>${Number(c.kids||0).toLocaleString()}</span></div>
+      <div class="detail-row"><span>תאריך התחלה</span><span>${c.created}</span></div>
+    </div>
+    <div class="detail-card" style="grid-column:1/-1"><h3>הערות</h3><p style="color:var(--muted);font-size:.95rem">${c.notes||'אין הערות'}</p></div>
+  `;
+  document.getElementById('detail-timeline').innerHTML = `<div class="timeline">${(c.history||[]).map(h=>`
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-date">${h.date}</div><div class="tl-text">${h.text}</div></div></div>
+  `).join('')}</div>`;
+  showPage('detail');
+}
+
+function openAddClient(){
+  document.getElementById('modal-title').textContent='לקוח חדש';
+  document.getElementById('client-form').reset();
+  document.getElementById('f-id').value='';
+  document.getElementById('modal').classList.add('open');
+}
+
+function editClient(id){
+  const c=getClients().find(x=>x.id===id);
+  if(!c)return;
+  document.getElementById('modal-title').textContent='עריכת לקוח';
+  document.getElementById('f-id').value=c.id;
+  document.getElementById('f-name').value=c.name;
+  document.getElementById('f-org').value=c.org;
+  document.getElementById('f-phone').value=c.phone||'';
+  document.getElementById('f-email').value=c.email||'';
+  document.getElementById('f-plan').value=c.plan;
+  document.getElementById('f-kids').value=c.kids||0;
+  document.getElementById('f-status').value=c.status;
+  document.getElementById('f-notes').value=c.notes||'';
+  document.getElementById('modal').classList.add('open');
+}
+
+function editCurrentClient(){if(currentClientId)editClient(currentClientId)}
+
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+
+function saveClient(e){
+  e.preventDefault();
+  const clients=getClients();
+  const id=document.getElementById('f-id').value;
+  const data={
+    name:document.getElementById('f-name').value,
+    org:document.getElementById('f-org').value,
+    phone:document.getElementById('f-phone').value,
+    email:document.getElementById('f-email').value,
+    plan:document.getElementById('f-plan').value,
+    kids:parseInt(document.getElementById('f-kids').value)||0,
+    status:document.getElementById('f-status').value,
+    notes:document.getElementById('f-notes').value,
+  };
+  if(id){
+    const idx=clients.findIndex(c=>c.id==id);
+    if(idx>=0){clients[idx]={...clients[idx],...data};clients[idx].history.push({date:new Date().toISOString().split('T')[0],text:'עודכנו פרטי לקוח'})}
+  } else {
+    data.id=Date.now();
+    data.created=new Date().toISOString().split('T')[0];
+    data.history=[{date:data.created,text:'לקוח נוסף למערכת'}];
+    clients.push(data);
+  }
+  saveClients(clients);
+  closeModal();
+  render();
+  if(currentClientId && id) showClient(parseInt(id));
+}
+
+function deleteClient(id){
+  if(!confirm('למחוק לקוח?'))return;
+  saveClients(getClients().filter(c=>c.id!==id));
+  render();
+}
+
+function addNote(){
+  const text=prompt('הערה חדשה:');
+  if(!text||!currentClientId)return;
+  const clients=getClients();
+  const c=clients.find(x=>x.id===currentClientId);
+  if(!c)return;
+  c.history=c.history||[];
+  c.history.unshift({date:new Date().toISOString().split('T')[0],text});
+  saveClients(clients);
+  showClient(currentClientId);
+}
+
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal()});
+render();
+</script>
+</body>
+</html>
