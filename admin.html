@@ -149,6 +149,7 @@ tr:hover td{background:var(--blue-light)}
   <a href="#" data-page="onboarding">🚀 הטמעה</a>
   <a href="#" data-page="support">🎧 תמיכה</a>
   <div style="flex:1"></div>
+  <a href="#" onclick="resetDemo()" style="font-size:.8rem;opacity:.5">🔄 איפוס דמו</a>
   <a href="index.html">🌐 אתר שיווק</a>
 </nav>
 
@@ -179,7 +180,7 @@ tr:hover td{background:var(--blue-light)}
 <!-- CLIENT DETAIL -->
 <div class="page" id="page-detail">
   <div class="topbar"><h1 id="detail-title"></h1>
-  <div style="display:flex;gap:8px"><button class="btn btn-outline" onclick="navTo('clients')">← חזרה</button><button class="btn btn-blue" onclick="editCurrentClient()">עריכה</button></div></div>
+  <div style="display:flex;gap:8px"><button class="btn btn-outline" onclick="navTo('clients')">→ חזרה</button><button class="btn btn-blue" onclick="editCurrentClient()">עריכה</button></div></div>
   <div class="detail-grid" id="detail-content"></div>
   <div class="card" style="margin-bottom:16px"><div class="card-header"><h2>ילדים בארגון</h2></div><table><thead><tr><th>שם</th><th>גיל</th><th>קבוצה</th><th>הורה</th></tr></thead><tbody id="detail-children"></tbody></table></div>
   <div class="card"><div class="card-header"><h2>היסטוריה</h2><button class="btn btn-sm btn-outline" onclick="addNote()">+ הערה</button></div><div id="detail-timeline"></div></div>
@@ -325,9 +326,9 @@ function saveParents(p){localStorage.setItem('kfiros_parents',JSON.stringify(p))
 // SEED
 if(!localStorage.getItem('kfiros_clients')){
   saveClients([
-    {id:1,name:'שי כהן',org:'המשכיל',phone:'050-1234567',email:'shai@hamaskil.co.il',plan:'ENTERPRISE',kids:5000,status:'lead',notes:'5,000 ילדים, רשת ארצית. פגישה ראשונה 1/6',created:'2026-06-01',history:[{date:'2026-06-01',text:'פגישת היכרות ראשונה'}]},
-    {id:2,name:'דוד גוילי',org:'תנופה הפקות',phone:'052-7654321',email:'david@tnufa.co.il',plan:'BASIC',kids:200,status:'lead',notes:'צהרון קטן, רוצה להתחיל מהר',created:'2026-06-01',history:[{date:'2026-06-01',text:'פגישת היכרות ראשונה'}]},
-    {id:3,name:'אילנה כוכבי',org:'אופק',phone:'054-9876543',email:'ilana@ofek.org.il',plan:'PRO',kids:800,status:'lead',notes:'800 ילדים, צריכה ניצנים',created:'2026-06-01',history:[{date:'2026-06-01',text:'פגישת היכרות ראשונה'}]},
+    {id:1,name:'שי כהן',org:'המשכיל',phone:'050-1234567',email:'shai@hamaskil.co.il',plan:'ENTERPRISE',status:'active',notes:'רשת ארצית, חתם על חוזה שנתי',created:'2026-05-15',history:[{date:'2026-05-15',text:'פגישת היכרות ראשונה'},{date:'2026-05-20',text:'חתימה על חוזה ENTERPRISE'},{date:'2026-05-25',text:'תחילת הטמעה'}]},
+    {id:2,name:'דוד גוילי',org:'תנופה הפקות',phone:'052-7654321',email:'david@tnufa.co.il',plan:'BASIC',status:'trial',notes:'צהרון קטן, בתקופת ניסיון',created:'2026-05-20',history:[{date:'2026-05-20',text:'פגישת היכרות ראשונה'},{date:'2026-05-22',text:'התחלת תקופת ניסיון'}]},
+    {id:3,name:'אילנה כוכבי',org:'אופק',phone:'054-9876543',email:'ilana@ofek.org.il',plan:'PRO',status:'lead',notes:'800 ילדים, צריכה ניצנים. פגישה 1/6',created:'2026-06-01',history:[{date:'2026-06-01',text:'פגישת היכרות ראשונה'}]},
   ]);
 }
 if(!localStorage.getItem('kfiros_tickets')){
@@ -433,7 +434,7 @@ function navTo(page){
 function renderDashboard(){
   const clients=getClients();
   const active=clients.filter(c=>c.status==='active');
-  const mrr=clients.filter(c=>c.status!=='churned').reduce((s,c)=>s+PLANS[c.plan],0);
+  const mrr=clients.filter(c=>c.status==='active'||c.status==='trial').reduce((s,c)=>s+PLANS[c.plan],0);
   const kids=getChildren().length;
   document.getElementById('kpis').innerHTML=`
     <div class="kpi"><div class="kpi-label">לקוחות</div><div class="kpi-value">${clients.length}</div><div class="kpi-sub">${active.length} פעילים</div></div>
@@ -498,7 +499,7 @@ function showClient(id){
 
 // BILLING
 function renderBilling(){
-  const clients=getClients().filter(c=>c.status!=='churned');
+  const clients=getClients().filter(c=>c.status==='active'||c.status==='trial');
   const mrr=clients.reduce((s,c)=>s+PLANS[c.plan],0);
   const paid=clients.filter(c=>c.status==='active').reduce((s,c)=>s+PLANS[c.plan],0);
   const pending=mrr-paid;
@@ -679,6 +680,12 @@ function saveParentForm(e){
 }
 function deleteParent(id){if(!confirm('למחוק הורה?'))return;saveParents(getParents().filter(p=>p.id!==id));renderParents()}
 function closeParentModal(){document.getElementById('parent-modal').classList.remove('open')}
+
+function resetDemo(){
+  if(!confirm('לאפס את כל הנתונים לדמו?'))return;
+  ['kfiros_clients','kfiros_tickets','kfiros_steps','kfiros_children','kfiros_parents'].forEach(k=>localStorage.removeItem(k));
+  location.reload();
+}
 
 renderDashboard();
 </script>
